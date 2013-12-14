@@ -19,11 +19,11 @@ In this game, a wisper (a body separated soul) will have to find his body by tra
 + http://developer.android.com/index.html
 
 ## Screenshots
-![Alt text](/screenshots/static_wisper.png "Static Wisper, accelerometer calibration")
+![Alt text](/Screenshots/static_wisper.png "Static Wisper, accelerometer calibration")
 
-![Alt text](/screenshots/wisper_move1.png "Wisper move using accelerometer & gravity")
+![Alt text](/Screenshots/wisper_move1.png "Wisper move using accelerometer & gravity")
 
-![Alt text](/screenshots/wisper_swipe1.png "Wisper attack using swipe gesture")
+![Alt text](/Screenshots/wisper_swipe1.png "Wisper attack using swipe gesture")
 
 ## Licence
 [GPL v2](http://www.gnu.org/licenses/gpl-2.0.html)

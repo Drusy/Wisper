@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/blue-wisper-shape.png</file>
+        <file>images/bottom-bar.png</file>
+        <file>images/button-game-new.png</file>
+        <file>images/button-menu.png</file>
+        <file>images/button-quit.png</file>
+    </qresource>
+</RCC>

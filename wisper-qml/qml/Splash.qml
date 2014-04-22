@@ -4,8 +4,8 @@ import "../js/android.js" as Android
 
 Rectangle {
     id: splash
-    width: 360
-    height: 360
+    width: 450
+    height: 750
     color: "#000000"
 
     onWidthChanged: mainLoader.item.width = splash.width

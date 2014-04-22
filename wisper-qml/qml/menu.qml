@@ -9,23 +9,14 @@ Rectangle {
     property int blockSize: 32 * Android.dp
     property int toolButtonHeight: 32 * Android.dp
     property int menuButtonSpacing: 0 * Android.dp
+    property int emitterScale: 125 * Android.dp
 
     color: "black"
-    width: 400
-    height: 400
 
-    Text {
-        anchors.centerIn: parent
-        text: "coucou" + Android.dp
-        color: "white"
-        font.pixelSize : 50
-    }
-
-
-    /*ParticleSystem {
-        id: particleSystem
-        width: 350
-        height: 350
+    ParticleSystem {
+        id: wisperParticle
+        width: parent.width
+        height: parent.height / 1.5
         anchors.horizontalCenter: parent.horizontalCenter
 
         ImageParticle {
@@ -37,14 +28,38 @@ Rectangle {
 
         Emitter {
             anchors.fill: parent
-            emitRate: 2000
-            lifeSpan: 400
+            emitRate: 4000
+            lifeSpan: 500
             size: 10
             shape: MaskShape {
                 source: "qrc:///images/blue-wisper-shape.png"
             }
         }
-    }*/
+    }
+
+    ParticleSystem {
+        id: wisperTextParticle
+        width: parent.width
+        height: parent.height / 4
+        anchors.top: wisperParticle.bottom
+
+        ImageParticle {
+            source: "qrc:///particleresources/glowdot.png"
+            anchors.fill: parent
+            color: "#336666CC"
+            colorVariation: 0.0
+        }
+
+        Emitter {
+            anchors.fill: parent
+            emitRate: 4000
+            lifeSpan: 500
+            size: 10
+            shape: MaskShape {
+                source: "qrc:///images/text-wisper-shape.png"
+            }
+        }
+    }
 
     Image {
         id: bottomBar

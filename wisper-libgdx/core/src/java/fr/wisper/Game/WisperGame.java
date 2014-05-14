@@ -6,6 +6,9 @@ import fr.wisper.screens.SplashScreen;
 import fr.wisper.utils.Debug;
 
 public class WisperGame extends Game {
+    public static final String GAME_NAME = "Wisper";
+    public static final String GAME_VERSION = "v0.1";
+
     FPSLogger fps = new FPSLogger();
 
     @Override

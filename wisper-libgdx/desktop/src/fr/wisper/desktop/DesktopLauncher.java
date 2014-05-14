@@ -9,7 +9,9 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 
-        config.title = "Wisper";
+        config.useGL30 = true;
+        config.vSyncEnabled = true;
+        config.title = WisperGame.GAME_NAME + " " + WisperGame.GAME_VERSION;
         config.width = 1280;
         config.height = 768;
 

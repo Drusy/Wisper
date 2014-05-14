@@ -59,6 +59,7 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-armeabi"
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-armeabi-v7a"
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86"
+        compile fileTree(dir: 'libs', include: '*.jar')
     }
 }
 
@@ -101,6 +102,7 @@ project(":core") {
         compile 'org.codehaus.groovy:groovy-all:2.2.0'
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+        compile fileTree(dir: 'libs', include: '*.jar')
     }
 }
 

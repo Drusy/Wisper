@@ -3,7 +3,7 @@ package fr.wisper.client;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.gwt.GwtApplication;
 import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
-import fr.wisper.WisperGame;
+import fr.wisper.Game.WisperGame;
 
 public class HtmlLauncher extends GwtApplication {
 

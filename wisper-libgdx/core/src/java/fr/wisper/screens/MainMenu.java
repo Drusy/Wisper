@@ -1,36 +1,56 @@
 package fr.wisper.screens;
 
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import fr.wisper.Game.WisperGame;
+import fr.wisper.tween.ImageAccessor;
+import fr.wisper.tween.SpriteAccessor;
 
 public class MainMenu implements Screen {
+    // Stage
     private Stage stage;
-    private TextureAtlas atlas;
-    private Table table;
-    private TextButton buttonPlay, buttonExit;
-    private Label heading;
-    private Skin skin;
-    private BitmapFont white;
+    private Group group;
+
+    // Buttons
+    private Image startImageButton;
+    private Image closeImageButton;
+
+    // Background image
+    private Sprite splash;
+    private SpriteBatch batch;
+    private TweenManager tweenManager;
+
+    // Textures
+    Texture closeTexture = new Texture("ui/close-button.png");
+    Texture startTexture = new Texture("ui/start-button.png");
 
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0.95f, 0.95f, 0.95f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        //Table.drawDebug(stage);
+        // Update animations
+        tweenManager.update(delta);
 
+        // Display background image
+        batch.begin();
+        splash.draw(batch);
+        group.draw(batch, 1);
+        batch.end();
+
+        // Display table
         stage.act(delta);
         stage.draw();
     }
@@ -42,52 +62,54 @@ public class MainMenu implements Screen {
 
     @Override
     public void show() {
-        stage = new Stage();
-        atlas = new TextureAtlas("ui/button.pack");
-        skin = new Skin(atlas);
-        table = new Table(skin);
-        white = new BitmapFont(Gdx.files.internal("fonts/white.fnt"), false);
+        // Buttons
+        startImageButton = new Image(startTexture);
+        startImageButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("Start Game");
+            }
+        });
+        startImageButton.addAction(Actions.moveBy(0, 150));
 
-        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-        textButtonStyle.up = skin.getDrawable("btn_black");
-        textButtonStyle.down = skin.getDrawable("btn_black");
-        textButtonStyle.pressedOffsetX = 1;
-        textButtonStyle.pressedOffsetY = -1;
-        textButtonStyle.font = white;
-        //textButtonStyle.fontColor = Color.BLACK;
-        //textButtonStyle.fontColor = Color.BLACK;
-
-        buttonExit = new TextButton("Exit", textButtonStyle);
-        buttonExit.pad(10);
-        buttonExit.addListener(new ClickListener() {
+        closeImageButton = new Image(closeTexture);
+        closeImageButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.exit();
             }
         });
 
-        buttonPlay = new TextButton("Play", textButtonStyle);
-        buttonPlay.pad(10);
+        group = new Group();
+        group.addActor(closeImageButton);
+        group.addActor(startImageButton);
+        group.addAction(Actions.moveTo(75, 75));
 
-        Label.LabelStyle headingStyle = new Label.LabelStyle(white, Color.BLACK);
-
-        heading = new Label(WisperGame.GAME_NAME, headingStyle);
-        heading.setFontScale(1.5f);
-
-        table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        table.add(heading);
-        table.getCell(heading).spaceBottom(100);
-        table.row();
-        table.columnDefaults(2);
-        table.add(buttonPlay);
-        table.getCell(buttonPlay).spaceBottom(50);
-        table.row();
-        table.add(buttonExit);
-        //table.debug();
-
-        stage.addActor(table);
-
+        // Stage
+        stage = new Stage();
+        stage.addActor(group);
         Gdx.input.setInputProcessor(stage);
+
+        // Background image
+        Texture splashTexture = new Texture("splash/splash.png");
+        batch = new SpriteBatch();
+        splash = new Sprite(splashTexture);
+        splash.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+        // Animations
+        tweenManager = new TweenManager();
+        float animationTime = 2f;
+
+        Tween.registerAccessor(Sprite.class, new SpriteAccessor());
+        Tween.registerAccessor(Image.class, new ImageAccessor());
+
+        Tween.set(splash, SpriteAccessor.ALPHA).target(0).start(tweenManager);
+        Tween.set(startImageButton, ImageAccessor.ALPHA).target(0).start(tweenManager);
+        Tween.set(closeImageButton, ImageAccessor.ALPHA).target(0).start(tweenManager);
+
+        Tween.to(splash, SpriteAccessor.ALPHA, animationTime).target(1).start(tweenManager);
+        Tween.to(startImageButton, ImageAccessor.ALPHA, animationTime).target(1).delay(animationTime / 2f).start(tweenManager);
+        Tween.to(closeImageButton, ImageAccessor.ALPHA, animationTime).target(1).delay(animationTime / 2f).start(tweenManager);
     }
 
     @Override
@@ -108,8 +130,9 @@ public class MainMenu implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
-        atlas.dispose();
-        skin.dispose();
-        white.dispose();
+        batch.dispose();
+        splash.getTexture().dispose();
+        startTexture.dispose();
+        closeTexture.dispose();
     }
 }

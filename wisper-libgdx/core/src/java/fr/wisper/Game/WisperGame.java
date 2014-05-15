@@ -2,7 +2,7 @@ package fr.wisper.Game;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.FPSLogger;
-import fr.wisper.screens.SplashScreen;
+import fr.wisper.screens.MainMenu;
 import fr.wisper.utils.Debug;
 
 public class WisperGame extends Game {
@@ -13,7 +13,7 @@ public class WisperGame extends Game {
 
     @Override
 	public void create () {
-        setScreen(new SplashScreen());
+        setScreen(new MainMenu());
 
         Debug.PrintDebugInformation();
 	}

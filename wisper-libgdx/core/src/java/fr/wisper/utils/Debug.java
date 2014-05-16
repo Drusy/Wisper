@@ -17,4 +17,8 @@ public class Debug {
         Gdx.app.log(DebugTag, "Application Type : " + appType.toString());
         Gdx.app.log(DebugTag, "--------------------------------");
     }
+
+    static public void Log(String logLine) {
+        Gdx.app.log(DebugTag, logLine);
+    }
 }

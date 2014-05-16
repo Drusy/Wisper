@@ -10,7 +10,7 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 
-        config.useGL30 = true;
+        config.useGL30 = false;
         config.vSyncEnabled = true;
         config.title = Config.GAME_NAME + " " + Config.GAME_VERSION;
         config.width = Config.APP_WIDTH;

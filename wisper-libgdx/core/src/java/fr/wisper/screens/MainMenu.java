@@ -5,7 +5,6 @@ import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -13,8 +12,8 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import fr.wisper.assets.MenuAssets;
 import fr.wisper.tween.ImageAccessor;
 import fr.wisper.tween.SpriteAccessor;
 
@@ -31,10 +30,6 @@ public class MainMenu implements Screen {
     private Sprite splash;
     private SpriteBatch batch;
     private TweenManager tweenManager;
-
-    // Textures
-    Texture closeTexture = new Texture("ui/close-button.png");
-    Texture startTexture = new Texture("ui/start-button.png");
 
     @Override
     public void render(float delta) {
@@ -57,13 +52,16 @@ public class MainMenu implements Screen {
 
     @Override
     public void resize(int width, int height) {
-
     }
 
     @Override
     public void show() {
+        // Assets
+        MenuAssets.load();
+        MenuAssets.manager.finishLoading();
+
         // Buttons
-        startImageButton = new Image(startTexture);
+        startImageButton = new Image(MenuAssets.manager.get(MenuAssets.NewGameButton));
         startImageButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -72,7 +70,7 @@ public class MainMenu implements Screen {
         });
         startImageButton.addAction(Actions.moveBy(0, 150));
 
-        closeImageButton = new Image(closeTexture);
+        closeImageButton = new Image(MenuAssets.manager.get(MenuAssets.CloseWisperButton));
         closeImageButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -91,14 +89,13 @@ public class MainMenu implements Screen {
         Gdx.input.setInputProcessor(stage);
 
         // Background image
-        Texture splashTexture = new Texture("splash/splash.png");
         batch = new SpriteBatch();
-        splash = new Sprite(splashTexture);
+        splash = new Sprite(MenuAssets.manager.get(MenuAssets.SplashScreen));
         splash.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         // Animations
         tweenManager = new TweenManager();
-        float animationTime = 2f;
+        float animationDuration = 2f;
 
         Tween.registerAccessor(Sprite.class, new SpriteAccessor());
         Tween.registerAccessor(Image.class, new ImageAccessor());
@@ -107,9 +104,9 @@ public class MainMenu implements Screen {
         Tween.set(startImageButton, ImageAccessor.ALPHA).target(0).start(tweenManager);
         Tween.set(closeImageButton, ImageAccessor.ALPHA).target(0).start(tweenManager);
 
-        Tween.to(splash, SpriteAccessor.ALPHA, animationTime).target(1).start(tweenManager);
-        Tween.to(startImageButton, ImageAccessor.ALPHA, animationTime).target(1).delay(animationTime / 2f).start(tweenManager);
-        Tween.to(closeImageButton, ImageAccessor.ALPHA, animationTime).target(1).delay(animationTime / 2f).start(tweenManager);
+        Tween.to(splash, SpriteAccessor.ALPHA, animationDuration).target(1).start(tweenManager);
+        Tween.to(startImageButton, ImageAccessor.ALPHA, animationDuration).target(1).delay(animationDuration / 2f).start(tweenManager);
+        Tween.to(closeImageButton, ImageAccessor.ALPHA, animationDuration).target(1).delay(animationDuration / 2f).start(tweenManager);
     }
 
     @Override
@@ -131,8 +128,6 @@ public class MainMenu implements Screen {
     public void dispose() {
         stage.dispose();
         batch.dispose();
-        splash.getTexture().dispose();
-        startTexture.dispose();
-        closeTexture.dispose();
+        MenuAssets.dispose();
     }
 }

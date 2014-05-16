@@ -4,6 +4,7 @@ import com.badlogic.gdx.Files;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import fr.wisper.Game.WisperGame;
+import fr.wisper.utils.Config;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {
@@ -11,9 +12,9 @@ public class DesktopLauncher {
 
         config.useGL30 = true;
         config.vSyncEnabled = true;
-        config.title = WisperGame.GAME_NAME + " " + WisperGame.GAME_VERSION;
-        config.width = 1280;
-        config.height = 768;
+        config.title = Config.GAME_NAME + " " + Config.GAME_VERSION;
+        config.width = Config.APP_WIDTH;
+        config.height = Config.APP_HEIGHT;
 
         config.addIcon("icons/wisper_16_windows.png", Files.FileType.Local);
         config.addIcon("icons/wisper_32_pc.png", Files.FileType.Local);

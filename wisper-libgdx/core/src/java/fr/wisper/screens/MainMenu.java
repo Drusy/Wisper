@@ -13,9 +13,13 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Scaling;
+import com.badlogic.gdx.utils.viewport.ScalingViewport;
+import fr.wisper.Game.WisperGame;
 import fr.wisper.assets.MenuAssets;
 import fr.wisper.tween.ImageAccessor;
 import fr.wisper.tween.SpriteAccessor;
+import fr.wisper.utils.Config;
 
 public class MainMenu implements Screen {
     // Stage
@@ -39,19 +43,32 @@ public class MainMenu implements Screen {
         // Update animations
         tweenManager.update(delta);
 
+        // Manage camera
+        WisperGame.Camera.update();
+        batch.setProjectionMatrix(WisperGame.Camera.combined);
+
         // Display background image
         batch.begin();
         splash.draw(batch);
-        group.draw(batch, 1);
         batch.end();
 
-        // Display table
+        // Act stage
+        stage.getCamera().update();
+        stage.getSpriteBatch().setProjectionMatrix(stage.getCamera().combined);
         stage.act(delta);
         stage.draw();
     }
 
     @Override
     public void resize(int width, int height) {
+        ScalingViewport stageViewport = new ScalingViewport(
+                Scaling.fit,
+                WisperGame.VirtualViewport.getVirtualWidth(),
+                WisperGame.VirtualViewport.getVirtualHeight(),
+                WisperGame.Camera);
+
+        stage.setViewport(stageViewport);
+        stage.getViewport().update(width, height, true);
     }
 
     @Override
@@ -79,9 +96,9 @@ public class MainMenu implements Screen {
         });
 
         group = new Group();
-        group.addActor(closeImageButton);
         group.addActor(startImageButton);
-        group.addAction(Actions.moveTo(75, 75));
+        group.addActor(closeImageButton);
+        group.addAction(Actions.moveBy(75, 75));
 
         // Stage
         stage = new Stage();
@@ -91,7 +108,7 @@ public class MainMenu implements Screen {
         // Background image
         batch = new SpriteBatch();
         splash = new Sprite(MenuAssets.manager.get(MenuAssets.SplashScreen));
-        splash.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        splash.setSize(Config.APP_WIDTH, Config.APP_HEIGHT);
 
         // Animations
         tweenManager = new TweenManager();

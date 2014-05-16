@@ -1,18 +1,37 @@
 package fr.wisper.Game;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.FPSLogger;
+import fr.wisper.camera.MultipleVirtualViewportBuilder;
+import fr.wisper.camera.OrthographicCameraWithVirtualViewport;
+import fr.wisper.camera.VirtualViewport;
 import fr.wisper.screens.MainMenu;
+import fr.wisper.utils.Config;
 import fr.wisper.utils.Debug;
 
 public class WisperGame extends Game {
-    public static final String GAME_NAME = "Wisper";
-    public static final String GAME_VERSION = "v0.1";
+    // Fps
+    private FPSLogger fps;
 
-    FPSLogger fps = new FPSLogger();
+    // Camera
+    static public OrthographicCameraWithVirtualViewport Camera;
+    static public MultipleVirtualViewportBuilder MultipleVirtualViewportBuilder;
+    static public VirtualViewport VirtualViewport;
 
     @Override
 	public void create () {
+        // Fps
+        fps = new FPSLogger();
+
+        // Camera
+        MultipleVirtualViewportBuilder = new MultipleVirtualViewportBuilder(
+                Config.APP_WIDTH, Config.APP_HEIGHT,
+                Config.APP_WIDTH, Config.APP_HEIGHT);
+        VirtualViewport = MultipleVirtualViewportBuilder.getVirtualViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        Camera = new OrthographicCameraWithVirtualViewport(VirtualViewport);
+        Camera.position.set(Config.APP_WIDTH / 2, Config.APP_HEIGHT / 2, 0f);
+
         setScreen(new MainMenu());
 
         Debug.PrintDebugInformation();
@@ -42,6 +61,12 @@ public class WisperGame extends Game {
 
     @Override
     public void resize(int width, int height) {
+        VirtualViewport = MultipleVirtualViewportBuilder.getVirtualViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+        Camera.setVirtualViewport(VirtualViewport);
+        Camera.updateViewport();
+        Camera.position.set(Config.APP_WIDTH / 2, Config.APP_HEIGHT / 2, 0f);
+
         super.resize(width, height);
     }
 }

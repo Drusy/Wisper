@@ -4,9 +4,7 @@ import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenManager;
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -20,6 +18,7 @@ import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import fr.wisper.Game.WisperGame;
 import fr.wisper.assets.SettingsAssets;
+import fr.wisper.dialog.ExitDialog;
 import fr.wisper.tween.SpriteAccessor;
 import fr.wisper.tween.TableAccessor;
 import fr.wisper.utils.Config;
@@ -35,7 +34,7 @@ public class SettingsMenu implements Screen {
     private TweenManager tweenManager;
 
     // Stage
-    private Stage stage;
+    private ExtendedStage stage;
     private Table table;
     private Skin skin;
 
@@ -91,8 +90,8 @@ public class SettingsMenu implements Screen {
         SettingsAssets.manager.finishLoading();
 
         // Stage
-        stage = new Stage();
         skin = new Skin(Gdx.files.internal("ui/skin.json"), new TextureAtlas("ui/atlas.pack"));
+        stage = new ExtendedStage(this);
         table = new Table(skin);
         table.setFillParent(true);
 
@@ -116,6 +115,7 @@ public class SettingsMenu implements Screen {
         // Stage
         createTable(vSyncCheckBox, saveFolderInput, backButton);
         Gdx.input.setInputProcessor(stage);
+        Gdx.input.setCatchBackKey(true);
         stage.addActor(table);
 
         // Animations
@@ -159,21 +159,25 @@ public class SettingsMenu implements Screen {
                     Gdx.app.getPreferences(Config.GAME_NAME).flush();
                     Debug.Log("[Settings] Saved");
 
-                    Tween.set(splash, SpriteAccessor.ALPHA).target(1).start(tweenManager);
-                    Tween.set(table, TableAccessor.ALPHA).target(1).start(tweenManager);
-
-                    Tween.to(splash, SpriteAccessor.ALPHA, Config.ANIMATION_DURATION / 3f).target(0).start(tweenManager);
-                    Tween.to(table, TableAccessor.ALPHA, Config.ANIMATION_DURATION / 3f).target(0).setCallback(new TweenCallback() {
-                        @Override
-                        public void onEvent(int type, BaseTween<?> source) {
-                            ((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenu());
-                        }
-                    }).start(tweenManager);
+                    fadeToMenu();
                 }
             }
         };
         vSyncCheckBox.addListener(buttonHandler);
         backButton.addListener(buttonHandler);
+    }
+
+    public void fadeToMenu() {
+        Tween.set(splash, SpriteAccessor.ALPHA).target(1).start(tweenManager);
+        Tween.set(table, TableAccessor.ALPHA).target(1).start(tweenManager);
+
+        Tween.to(splash, SpriteAccessor.ALPHA, Config.ANIMATION_DURATION / 3f).target(0).start(tweenManager);
+        Tween.to(table, TableAccessor.ALPHA, Config.ANIMATION_DURATION / 3f).target(0).setCallback(new TweenCallback() {
+            @Override
+            public void onEvent(int type, BaseTween<?> source) {
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenu());
+            }
+        }).start(tweenManager);
     }
 
     private void createTable(CheckBox vSyncCheckBox, TextField saveFolderInput, TextButton backButton) {
@@ -209,4 +213,26 @@ public class SettingsMenu implements Screen {
         SettingsAssets.dispose();
     }
 
+    private class ExtendedStage extends Stage {
+        private SettingsMenu settingsMenu;
+        private boolean fading = false;
+
+        public ExtendedStage(SettingsMenu settingsMenu) {
+            super();
+
+            this.settingsMenu = settingsMenu;
+        }
+
+        @Override
+        public boolean keyDown(int keyCode) {
+            if(keyCode == Input.Keys.ESCAPE || keyCode == Input.Keys.BACK){
+                if (!fading) {
+                    settingsMenu.fadeToMenu();
+                    fading = true;
+                }
+            }
+
+            return super.keyDown(keyCode);
+        }
+    }
 }

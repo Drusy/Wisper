@@ -13,6 +13,10 @@ public class Config {
     public static final int APP_HEIGHT = 768;
     public static final String DEFAULT_SAVE_FOLDER = Config.GAME_NAME + "/saves";
     public static final float ANIMATION_DURATION = 1.5f;
+    public static final float WISPER_SPEED = 150;
+    public static final float DOUBLE_TAP_INTERVAL = 500f;
+    public static final float WISPER_DASH_DISTANCE = 300f;
+    public static final float WISPER_DASH_DURATION = 0.25f;
 
     public static boolean isAndroid() {
         return (Gdx.app.getType() == Application.ApplicationType.Android);

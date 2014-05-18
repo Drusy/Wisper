@@ -13,10 +13,7 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -26,11 +23,11 @@ import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import fr.wisper.Game.WisperGame;
 import fr.wisper.assets.MenuAssets;
 import fr.wisper.dialog.ExitDialog;
+import fr.wisper.entities.Wisper;
 import fr.wisper.tween.ImageAccessor;
 import fr.wisper.tween.ParticleEffectAccessor;
 import fr.wisper.tween.SpriteAccessor;
 import fr.wisper.utils.Config;
-import fr.wisper.utils.Debug;
 
 public class MainMenu implements Screen {
     // Stage
@@ -48,9 +45,10 @@ public class MainMenu implements Screen {
     private SpriteBatch batch;
     private TweenManager tweenManager;
 
-    // Particle effect
-    private ParticleEffect particleEffect;
-    private boolean isParticleOn = true;
+    // Black Wisper
+    Wisper wisper;
+    ClickListener wisperClickListener;
+    long lastClickTime = 0;
 
     @Override
     public void render(float delta) {
@@ -64,9 +62,7 @@ public class MainMenu implements Screen {
         // Display background image
         batch.begin();
         splash.draw(batch);
-        if (isParticleOn) {
-            particleEffect.draw(batch, delta);
-        }
+        wisper.draw(batch, delta);
         batch.end();
 
         // Act stage
@@ -116,6 +112,30 @@ public class MainMenu implements Screen {
 
         // Animations
         initAnimations();
+
+        // Init wisper
+        initWisper();
+    }
+
+    private void initWisper() {
+        wisper = new Wisper("particles/black-wisper-noadditive.p");
+        wisperClickListener = new ClickListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                long currentTime = System.currentTimeMillis();
+
+                if (currentTime - lastClickTime < Config.DOUBLE_TAP_INTERVAL) {
+                    // Dash code
+                    wisper.dash((int) x, (int) y, tweenManager, stage.getViewport());
+                } else {
+                    wisper.moveTo((int) x, (int) y, tweenManager, stage.getViewport());
+                }
+                lastClickTime = currentTime;
+
+                return super.touchDown(event, x, y, pointer, button);
+            }
+        };
+        stage.addListener(wisperClickListener);
     }
 
     private void applyPreferences() {
@@ -144,7 +164,7 @@ public class MainMenu implements Screen {
         settingsImageButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-            isParticleOn = false;
+            wisper.stopDraw();
 
             Tween.set(splash, SpriteAccessor.ALPHA).target(1).start(tweenManager);
             Tween.set(startImageButton, ImageAccessor.ALPHA).target(1).start(tweenManager);
@@ -171,14 +191,6 @@ public class MainMenu implements Screen {
         group.addActor(startImageButton);
         group.addActor(closeImageButton);
         group.addAction(Actions.moveBy(75, 75));
-
-        // Particle effects
-        particleEffect = new ParticleEffect();
-        particleEffect.load(Gdx.files.internal("particles/black-wisper-noadditive.p"), Gdx.files.internal("particles"));
-        particleEffect.setPosition(Config.APP_WIDTH / 2, Config.APP_HEIGHT / 2);
-        particleEffect.start();
-
-        Debug.Log("" + particleEffect.getEmitters().size);
     }
 
     private void initAnimations() {
@@ -201,11 +213,6 @@ public class MainMenu implements Screen {
         tweenManager.update(Float.MIN_VALUE);
     }
 
-    private void moveParticleEffect(int x, int y) {
-        Tween.to(particleEffect, ParticleEffectAccessor.X, Config.ANIMATION_DURATION).target(x).start(tweenManager);
-        Tween.to(particleEffect, ParticleEffectAccessor.Y, Config.ANIMATION_DURATION).target(y).start(tweenManager);
-    }
-
     @Override
     public void hide() {
         dispose();
@@ -225,31 +232,30 @@ public class MainMenu implements Screen {
     public void dispose() {
         batch.dispose();
         skin.dispose();
-        particleEffect.dispose();
+        wisper.dispose();
         MenuAssets.dispose();
     }
 
     private class ExtendedStage extends Stage {
         private Skin skin;
         private ExitDialog dialog;
-        private MainMenu mainMenu;
 
         public ExtendedStage(Skin skin, MainMenu mainMenu) {
             super();
 
             this.skin = skin;
             this.dialog = new ExitDialog("Confirm Exit", this.skin);
-            this.mainMenu = mainMenu;
         }
 
+        /*
         @Override
         public boolean touchDown(int screenX, int screenY, int pointer, int button) {
             Vector2 touchPos = Config.getProjectedCoordinates(screenX, screenY, getViewport());
 
-            mainMenu.moveParticleEffect((int)touchPos.x , (int)touchPos.y);
-
+            wisper.moveTo((int)touchPos.x, (int)touchPos.y, tweenManager, getViewport());
             return super.touchDown(screenX, screenY, pointer, button);
         }
+        */
 
         @Override
         public boolean keyDown(int keyCode) {

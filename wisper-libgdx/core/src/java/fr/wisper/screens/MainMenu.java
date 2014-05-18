@@ -9,6 +9,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -44,6 +45,9 @@ public class MainMenu implements Screen {
     private SpriteBatch batch;
     private TweenManager tweenManager;
 
+    // Particle effect
+    private ParticleEffect particleEffect;
+
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0.95f, 0.95f, 0.95f, 1);
@@ -56,6 +60,7 @@ public class MainMenu implements Screen {
         // Display background image
         batch.begin();
         splash.draw(batch);
+        particleEffect.draw(batch, delta);
         batch.end();
 
         // Act stage
@@ -133,20 +138,20 @@ public class MainMenu implements Screen {
         settingsImageButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Tween.set(splash, SpriteAccessor.ALPHA).target(1).start(tweenManager);
-                Tween.set(startImageButton, ImageAccessor.ALPHA).target(1).start(tweenManager);
-                Tween.set(closeImageButton, ImageAccessor.ALPHA).target(1).start(tweenManager);
-                Tween.set(settingsImageButton, ImageAccessor.ALPHA).target(1).start(tweenManager);
+            Tween.set(splash, SpriteAccessor.ALPHA).target(1).start(tweenManager);
+            Tween.set(startImageButton, ImageAccessor.ALPHA).target(1).start(tweenManager);
+            Tween.set(closeImageButton, ImageAccessor.ALPHA).target(1).start(tweenManager);
+            Tween.set(settingsImageButton, ImageAccessor.ALPHA).target(1).start(tweenManager);
 
-                Tween.to(closeImageButton, ImageAccessor.ALPHA, Config.ANIMATION_DURATION / 3f).target(0).start(tweenManager);
-                Tween.to(settingsImageButton, ImageAccessor.ALPHA, Config.ANIMATION_DURATION / 3f).target(0).start(tweenManager);
-                Tween.to(startImageButton, ImageAccessor.ALPHA, Config.ANIMATION_DURATION / 3f).target(0).start(tweenManager);
-                Tween.to(splash, SpriteAccessor.ALPHA, Config.ANIMATION_DURATION / 3f).target(0).setCallback(new TweenCallback() {
-                    @Override
-                    public void onEvent(int type, BaseTween<?> source) {
-                        ((Game) Gdx.app.getApplicationListener()).setScreen(new SettingsMenu());
-                    }
-                }).start(tweenManager);
+            Tween.to(closeImageButton, ImageAccessor.ALPHA, Config.ANIMATION_DURATION / 3f).target(0).start(tweenManager);
+            Tween.to(settingsImageButton, ImageAccessor.ALPHA, Config.ANIMATION_DURATION / 3f).target(0).start(tweenManager);
+            Tween.to(startImageButton, ImageAccessor.ALPHA, Config.ANIMATION_DURATION / 3f).target(0).start(tweenManager);
+            Tween.to(splash, SpriteAccessor.ALPHA, Config.ANIMATION_DURATION / 3f).target(0).setCallback(new TweenCallback() {
+                @Override
+                public void onEvent(int type, BaseTween<?> source) {
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new SettingsMenu());
+                }
+            }).start(tweenManager);
             }
         });
 
@@ -158,6 +163,12 @@ public class MainMenu implements Screen {
         group.addActor(startImageButton);
         group.addActor(closeImageButton);
         group.addAction(Actions.moveBy(75, 75));
+
+        // Particle effects
+        particleEffect = new ParticleEffect();
+        particleEffect.load(Gdx.files.internal("particles/black-wisper-noadditive.p"), Gdx.files.internal("particles"));
+        particleEffect.setPosition(Config.APP_WIDTH / 2, Config.APP_HEIGHT / 2);
+        particleEffect.start();
     }
 
     private void initAnimations() {

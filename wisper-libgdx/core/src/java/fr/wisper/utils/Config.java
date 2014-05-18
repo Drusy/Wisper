@@ -3,6 +3,8 @@ package fr.wisper.utils;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class Config {
     public static final String GAME_NAME = "Wisper";
@@ -14,5 +16,21 @@ public class Config {
 
     public static boolean isAndroid() {
         return (Gdx.app.getType() == Application.ApplicationType.Android);
+    }
+
+    public static Vector2 getProjectedCoordinates(int screenX, int screenY, Viewport viewport) {
+        Vector2 touchPos = new Vector2(screenX, screenY);
+        //touchPos = getCamera().unproject(touchPos);
+        float xRatio = (float) Config.APP_WIDTH / (float) viewport.getViewportWidth();
+        float yRatio = (float) Config.APP_HEIGHT / (float) viewport.getViewportHeight();
+
+        touchPos.x -= (Gdx.graphics.getWidth() - viewport.getViewportWidth()) / 2;
+        touchPos.x *= xRatio;
+
+        touchPos.y = Gdx.graphics.getHeight() - touchPos.y;
+        touchPos.y -= (Gdx.graphics.getHeight() - viewport.getViewportHeight()) / 2;
+        touchPos.y *= yRatio;
+
+        return touchPos;
     }
 }

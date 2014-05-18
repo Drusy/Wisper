@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -26,8 +27,10 @@ import fr.wisper.Game.WisperGame;
 import fr.wisper.assets.MenuAssets;
 import fr.wisper.dialog.ExitDialog;
 import fr.wisper.tween.ImageAccessor;
+import fr.wisper.tween.ParticleEffectAccessor;
 import fr.wisper.tween.SpriteAccessor;
 import fr.wisper.utils.Config;
+import fr.wisper.utils.Debug;
 
 public class MainMenu implements Screen {
     // Stage
@@ -47,6 +50,7 @@ public class MainMenu implements Screen {
 
     // Particle effect
     private ParticleEffect particleEffect;
+    private boolean isParticleOn = true;
 
     @Override
     public void render(float delta) {
@@ -60,7 +64,9 @@ public class MainMenu implements Screen {
         // Display background image
         batch.begin();
         splash.draw(batch);
-        particleEffect.draw(batch, delta);
+        if (isParticleOn) {
+            particleEffect.draw(batch, delta);
+        }
         batch.end();
 
         // Act stage
@@ -97,7 +103,7 @@ public class MainMenu implements Screen {
 
         // Stage
         skin = new Skin(Gdx.files.internal("ui/skin.json"), new TextureAtlas("ui/atlas.pack"));
-        stage = new ExtendedStage(skin);
+        stage = new ExtendedStage(skin, this);
         stage.addActor(group);
         stage.addActor(settingsImageButton);
         Gdx.input.setInputProcessor(stage);
@@ -138,6 +144,8 @@ public class MainMenu implements Screen {
         settingsImageButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+            isParticleOn = false;
+
             Tween.set(splash, SpriteAccessor.ALPHA).target(1).start(tweenManager);
             Tween.set(startImageButton, ImageAccessor.ALPHA).target(1).start(tweenManager);
             Tween.set(closeImageButton, ImageAccessor.ALPHA).target(1).start(tweenManager);
@@ -169,6 +177,8 @@ public class MainMenu implements Screen {
         particleEffect.load(Gdx.files.internal("particles/black-wisper-noadditive.p"), Gdx.files.internal("particles"));
         particleEffect.setPosition(Config.APP_WIDTH / 2, Config.APP_HEIGHT / 2);
         particleEffect.start();
+
+        Debug.Log("" + particleEffect.getEmitters().size);
     }
 
     private void initAnimations() {
@@ -176,6 +186,7 @@ public class MainMenu implements Screen {
 
         Tween.registerAccessor(Sprite.class, new SpriteAccessor());
         Tween.registerAccessor(Image.class, new ImageAccessor());
+        Tween.registerAccessor(ParticleEffect.class, new ParticleEffectAccessor());
 
         Tween.set(splash, SpriteAccessor.ALPHA).target(0).start(tweenManager);
         Tween.set(startImageButton, ImageAccessor.ALPHA).target(0).start(tweenManager);
@@ -188,6 +199,11 @@ public class MainMenu implements Screen {
         Tween.to(settingsImageButton, ImageAccessor.ALPHA, Config.ANIMATION_DURATION).target(1).delay(Config.ANIMATION_DURATION / 2f).start(tweenManager);
 
         tweenManager.update(Float.MIN_VALUE);
+    }
+
+    private void moveParticleEffect(int x, int y) {
+        Tween.to(particleEffect, ParticleEffectAccessor.X, Config.ANIMATION_DURATION).target(x).start(tweenManager);
+        Tween.to(particleEffect, ParticleEffectAccessor.Y, Config.ANIMATION_DURATION).target(y).start(tweenManager);
     }
 
     @Override
@@ -209,18 +225,30 @@ public class MainMenu implements Screen {
     public void dispose() {
         batch.dispose();
         skin.dispose();
+        particleEffect.dispose();
         MenuAssets.dispose();
     }
 
     private class ExtendedStage extends Stage {
         private Skin skin;
         private ExitDialog dialog;
+        private MainMenu mainMenu;
 
-        public ExtendedStage(Skin skin) {
+        public ExtendedStage(Skin skin, MainMenu mainMenu) {
             super();
 
             this.skin = skin;
             this.dialog = new ExitDialog("Confirm Exit", this.skin);
+            this.mainMenu = mainMenu;
+        }
+
+        @Override
+        public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+            Vector2 touchPos = Config.getProjectedCoordinates(screenX, screenY, getViewport());
+
+            mainMenu.moveParticleEffect((int)touchPos.x , (int)touchPos.y);
+
+            return super.touchDown(screenX, screenY, pointer, button);
         }
 
         @Override

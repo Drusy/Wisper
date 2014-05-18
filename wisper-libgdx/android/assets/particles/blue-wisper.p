@@ -184,4 +184,4 @@ aligned: false
 additive: true
 behind: false
 - Image Path -
-C:\Users\Drusy\Dropbox\GitHub\Wisper\wisper-libgdx\android\assets\particles\particle.png
+particle.png

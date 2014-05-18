@@ -6,28 +6,33 @@ import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import fr.wisper.Game.WisperGame;
 import fr.wisper.assets.MenuAssets;
+import fr.wisper.dialog.ExitDialog;
 import fr.wisper.tween.ImageAccessor;
 import fr.wisper.tween.SpriteAccessor;
 import fr.wisper.utils.Config;
 
 public class MainMenu implements Screen {
     // Stage
-    private Stage stage;
+    private ExtendedStage stage;
     private Group group;
+    private Skin skin;
 
     // Buttons
     private Image startImageButton;
@@ -59,7 +64,6 @@ public class MainMenu implements Screen {
 
         // Update animations
         tweenManager.update(delta);
-
     }
 
     @Override
@@ -87,10 +91,12 @@ public class MainMenu implements Screen {
         initButtons();
 
         // Stage
-        stage = new Stage();
+        skin = new Skin(Gdx.files.internal("ui/skin.json"), new TextureAtlas("ui/atlas.pack"));
+        stage = new ExtendedStage(skin);
         stage.addActor(group);
         stage.addActor(settingsImageButton);
         Gdx.input.setInputProcessor(stage);
+        Gdx.input.setCatchBackKey(true);
 
         // Background image
         batch = new SpriteBatch();
@@ -191,6 +197,28 @@ public class MainMenu implements Screen {
     @Override
     public void dispose() {
         batch.dispose();
+        skin.dispose();
         MenuAssets.dispose();
+    }
+
+    private class ExtendedStage extends Stage {
+        private Skin skin;
+        private ExitDialog dialog;
+
+        public ExtendedStage(Skin skin) {
+            super();
+
+            this.skin = skin;
+            this.dialog = new ExitDialog("Confirm Exit", this.skin);
+        }
+
+        @Override
+        public boolean keyDown(int keyCode) {
+            if(keyCode == Input.Keys.ESCAPE || keyCode == Input.Keys.BACK){
+                dialog.show(this);
+            }
+
+            return super.keyDown(keyCode);
+        }
     }
 }

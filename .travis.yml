@@ -1,0 +1,4 @@
+language: java
+
+before_script: cd wisper-libgdx
+script: "./gradlew desktop:classes"

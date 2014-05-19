@@ -1,7 +1,8 @@
 language: java
 
 before_script: 
-	- cd wisper-libgdx
-	- pwd
-	- chmod +x gradlew
+  - "cd wisper-libgdx"
+  - pwd
+  - "chmod +x gradlew"
+
 script: "./gradlew desktop:classes"

@@ -17,6 +17,7 @@ public class Config {
     public static final float DOUBLE_TAP_INTERVAL = 500f;
     public static final float WISPER_DASH_DISTANCE = 300f;
     public static final float WISPER_DASH_DURATION = 0.25f;
+    public static final long WISPER_DASH_TIMEOUT = 2000;
 
     public static boolean isAndroid() {
         return (Gdx.app.getType() == Application.ApplicationType.Android);

@@ -13,10 +13,15 @@ import fr.wisper.utils.Config;
 import fr.wisper.utils.Debug;
 
 import javax.xml.bind.ValidationException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Wisper {
     private ParticleEffect particleEffect;
     private boolean isParticleOn = true;
+    private boolean isDashUp = true;
+    private Timer timer = new Timer();
+    private TimerTask timerTask;
 
     public Wisper(String particleFile) {
         init(particleFile);
@@ -64,23 +69,36 @@ public class Wisper {
         Tween.to(particleEffect, ParticleEffectAccessor.Y, (float)duration).target(y).start(tweenManager);
     }
 
-    public void dash(int x, int y, TweenManager tweenManager, Viewport viewport) {
-        Vector2 particlePos = new Vector2(getX(), getY());
-        Vector2 requestedPos = new Vector2(x, y);
+    public void dash(int x, int y, TweenManager tweenManager) {
+        if (isDashUp) {
+            Vector2 particlePos = new Vector2(getX(), getY());
+            Vector2 requestedPos = new Vector2(x, y);
 
-        double distance = Math.max(
-            Math.sqrt(Math.pow(particlePos.x - requestedPos.x, 2) + Math.pow(particlePos.y - requestedPos.y, 2)),
-            1);
-        double dashDistance = Math.min(distance, Config.WISPER_DASH_DISTANCE);
-        float alpha = (float)dashDistance / (float)distance;
+            double distance = Math.max(
+                    Math.sqrt(Math.pow(particlePos.x - requestedPos.x, 2) + Math.pow(particlePos.y - requestedPos.y, 2)),
+                    1);
+            double dashDistance = Math.min(distance, Config.WISPER_DASH_DISTANCE);
+            float alpha = (float)dashDistance / (float)distance;
 
-        Vector2 AB = new Vector2(requestedPos.x - particlePos.x, requestedPos.y - particlePos.y);
-        Vector2 ABPrim = new Vector2(alpha * AB.x, alpha * AB.y);
-        Vector2 BPrim = new Vector2(ABPrim.x + particlePos.x, ABPrim.y + particlePos.y);
+            Vector2 AB = new Vector2(requestedPos.x - particlePos.x, requestedPos.y - particlePos.y);
+            Vector2 ABPrim = new Vector2(alpha * AB.x, alpha * AB.y);
+            Vector2 BPrim = new Vector2(ABPrim.x + particlePos.x, ABPrim.y + particlePos.y);
 
-        tweenManager.killTarget(particleEffect);
-        Tween.to(particleEffect, ParticleEffectAccessor.X, Config.WISPER_DASH_DURATION).target(BPrim.x).start(tweenManager);
-        Tween.to(particleEffect, ParticleEffectAccessor.Y, Config.WISPER_DASH_DURATION).target(BPrim.y).start(tweenManager);
+            tweenManager.killTarget(particleEffect);
+            Tween.to(particleEffect, ParticleEffectAccessor.X, Config.WISPER_DASH_DURATION).target(BPrim.x).start(tweenManager);
+            Tween.to(particleEffect, ParticleEffectAccessor.Y, Config.WISPER_DASH_DURATION).target(BPrim.y).start(tweenManager);
+
+            timerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    isDashUp = true;
+                }
+            };
+            isDashUp = false;
+            timer.schedule(timerTask, Config.WISPER_DASH_TIMEOUT);
+        } else {
+            Debug.Log("Dash not ready yet, " + (timerTask.scheduledExecutionTime() - System.currentTimeMillis()) + "ms remaining");
+        }
     }
 
     public void dispose() {

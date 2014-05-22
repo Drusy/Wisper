@@ -65,7 +65,7 @@ public class Wisper {
         double duration = distance / Config.WISPER_SPEED;
 
         tweenManager.killTarget(particleEffect);
-        Tween.to(particleEffect, ParticleEffectAccessor.X, (float)duration).target(x).start(tweenManager);
+        Tween.to(particleEffect, ParticleEffectAccessor.X, (float)duration).target(x - (particleEffect.getEmitters().first().getXOffsetValue().getLowMax() / 2)).start(tweenManager);
         Tween.to(particleEffect, ParticleEffectAccessor.Y, (float)duration).target(y).start(tweenManager);
     }
 
@@ -85,7 +85,7 @@ public class Wisper {
             Vector2 BPrim = new Vector2(ABPrim.x + particlePos.x, ABPrim.y + particlePos.y);
 
             tweenManager.killTarget(particleEffect);
-            Tween.to(particleEffect, ParticleEffectAccessor.X, Config.WISPER_DASH_DURATION).target(BPrim.x).start(tweenManager);
+            Tween.to(particleEffect, ParticleEffectAccessor.X, Config.WISPER_DASH_DURATION).target(BPrim.x - (particleEffect.getEmitters().first().getXOffsetValue().getLowMax() / 2)).start(tweenManager);
             Tween.to(particleEffect, ParticleEffectAccessor.Y, Config.WISPER_DASH_DURATION).target(BPrim.y).start(tweenManager);
 
             timerTask = new TimerTask() {

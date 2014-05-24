@@ -147,7 +147,7 @@ public class MainMenu implements Screen {
         startImageButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-
+                fadeTo(new WisperChooseMenu());
             }
         });
         startImageButton.addAction(Actions.moveBy(0, 150));
@@ -164,22 +164,7 @@ public class MainMenu implements Screen {
         settingsImageButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-            wisper.stopDraw();
-
-            Tween.set(splash, SpriteAccessor.ALPHA).target(1).start(tweenManager);
-            Tween.set(startImageButton, ImageAccessor.ALPHA).target(1).start(tweenManager);
-            Tween.set(closeImageButton, ImageAccessor.ALPHA).target(1).start(tweenManager);
-            Tween.set(settingsImageButton, ImageAccessor.ALPHA).target(1).start(tweenManager);
-
-            Tween.to(closeImageButton, ImageAccessor.ALPHA, Config.ANIMATION_DURATION / 3f).target(0).start(tweenManager);
-            Tween.to(settingsImageButton, ImageAccessor.ALPHA, Config.ANIMATION_DURATION / 3f).target(0).start(tweenManager);
-            Tween.to(startImageButton, ImageAccessor.ALPHA, Config.ANIMATION_DURATION / 3f).target(0).start(tweenManager);
-            Tween.to(splash, SpriteAccessor.ALPHA, Config.ANIMATION_DURATION / 3f).target(0).setCallback(new TweenCallback() {
-                @Override
-                public void onEvent(int type, BaseTween<?> source) {
-                    ((Game) Gdx.app.getApplicationListener()).setScreen(new SettingsMenu());
-                }
-            }).start(tweenManager);
+                fadeTo(new SettingsMenu());
             }
         });
 
@@ -191,6 +176,25 @@ public class MainMenu implements Screen {
         group.addActor(startImageButton);
         group.addActor(closeImageButton);
         group.addAction(Actions.moveBy(75, 75));
+    }
+
+    private void fadeTo(final Screen screen) {
+        wisper.stopDraw();
+
+        Tween.set(splash, SpriteAccessor.ALPHA).target(1).start(tweenManager);
+        Tween.set(startImageButton, ImageAccessor.ALPHA).target(1).start(tweenManager);
+        Tween.set(closeImageButton, ImageAccessor.ALPHA).target(1).start(tweenManager);
+        Tween.set(settingsImageButton, ImageAccessor.ALPHA).target(1).start(tweenManager);
+
+        Tween.to(closeImageButton, ImageAccessor.ALPHA, Config.ANIMATION_DURATION / 3f).target(0).start(tweenManager);
+        Tween.to(settingsImageButton, ImageAccessor.ALPHA, Config.ANIMATION_DURATION / 3f).target(0).start(tweenManager);
+        Tween.to(startImageButton, ImageAccessor.ALPHA, Config.ANIMATION_DURATION / 3f).target(0).start(tweenManager);
+        Tween.to(splash, SpriteAccessor.ALPHA, Config.ANIMATION_DURATION / 3f).target(0).setCallback(new TweenCallback() {
+            @Override
+            public void onEvent(int type, BaseTween<?> source) {
+                ((Game) Gdx.app.getApplicationListener()).setScreen(screen);
+            }
+        }).start(tweenManager);
     }
 
     private void initAnimations() {

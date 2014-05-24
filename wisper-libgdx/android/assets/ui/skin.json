@@ -27,7 +27,7 @@
         "big-bold":  { "up": "btn-black", "down": "btn-black", "font": "white64-bold", "pressedOffsetX": 1, "pressedOffsetY": -1 }
     },
     "com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle": {
-        "default": { "font": "white32", "fontColorUnselected": "black", "fontColorSelected": "white", "selection": "btn-white" }
+        "default": { "font": "white32", "fontColorUnselected": "black", "fontColorSelected": "lightgray", "selection": "list-selected" }
     },
     "com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle": {
         "default": { "hScrollKnob": "btn-black", "vScrollKnob": "btn-black" }

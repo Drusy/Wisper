@@ -49,6 +49,14 @@ btn-white
   orig: 46, 48
   offset: 0, 0
   index: -1
+list-selected
+  rotate: false
+  xy: 318, 62
+  size: 46, 48
+  split: 12, 33, 5, 4
+  orig: 46, 48
+  offset: 0, 0
+  index: -1
 textedit-background
   rotate: false
   xy: 1, 1

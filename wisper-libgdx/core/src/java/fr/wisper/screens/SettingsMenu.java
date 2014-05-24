@@ -93,6 +93,8 @@ public class SettingsMenu implements Screen {
         stage = new ExtendedStage(this);
         table = new Table(skin);
         table.setFillParent(true);
+        Gdx.input.setInputProcessor(stage);
+        Gdx.input.setCatchBackKey(true);
 
         final CheckBox vSyncCheckBox = new CheckBox("", skin);
         vSyncCheckBox.setChecked(vSync());
@@ -111,10 +113,8 @@ public class SettingsMenu implements Screen {
         // Listener
         manageListener(vSyncCheckBox, saveFolderInput, backButton);
 
-        // Stage
+        // Table
         createTable(vSyncCheckBox, saveFolderInput, backButton);
-        Gdx.input.setInputProcessor(stage);
-        Gdx.input.setCatchBackKey(true);
         stage.addActor(table);
 
         // Animations

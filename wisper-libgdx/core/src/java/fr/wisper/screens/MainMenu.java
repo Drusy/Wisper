@@ -128,7 +128,7 @@ public class MainMenu implements Screen {
                     // Dash code
                     wisper.dash((int) x, (int) y, tweenManager);
                 } else {
-                    wisper.moveTo((int) x, (int) y, tweenManager, stage.getViewport());
+                    wisper.moveTo((int) x, (int) y, tweenManager);
                 }
                 lastClickTime = currentTime;
 

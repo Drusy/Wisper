@@ -3,6 +3,8 @@ package fr.wisper.entities;
 
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenManager;
+import aurelienribon.tweenengine.equations.Linear;
+import aurelienribon.tweenengine.equations.Quad;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
@@ -52,7 +54,7 @@ public class Wisper {
         return (int)particleEffect.getEmitters().first().getY();
     }
 
-    public void moveTo(int x, int y, TweenManager tweenManager, Viewport viewport) {
+    public void moveTo(int x, int y, TweenManager tweenManager) {
         //Vector2 particlePos = Config.getProjectedCoordinates(getX(), getY(), viewport);
         //Vector2 requestedPos = Config.getProjectedCoordinates(x, y, viewport);
 
@@ -65,8 +67,11 @@ public class Wisper {
         double duration = distance / Config.WISPER_SPEED;
 
         tweenManager.killTarget(particleEffect);
-        Tween.to(particleEffect, ParticleEffectAccessor.X, (float)duration).target(x - (particleEffect.getEmitters().first().getXOffsetValue().getLowMax() / 2)).start(tweenManager);
-        Tween.to(particleEffect, ParticleEffectAccessor.Y, (float)duration).target(y).start(tweenManager);
+        Tween.to(particleEffect, ParticleEffectAccessor.X, (float)duration)
+                .target(x - (particleEffect.getEmitters().first().getXOffsetValue().getLowMax() / 2))
+                .ease(Quad.OUT).start(tweenManager);
+        Tween.to(particleEffect, ParticleEffectAccessor.Y, (float)duration).target(y)
+                .ease(Quad.OUT).start(tweenManager);
     }
 
     public void dash(int x, int y, TweenManager tweenManager) {
@@ -85,8 +90,11 @@ public class Wisper {
             Vector2 BPrim = new Vector2(ABPrim.x + particlePos.x, ABPrim.y + particlePos.y);
 
             tweenManager.killTarget(particleEffect);
-            Tween.to(particleEffect, ParticleEffectAccessor.X, Config.WISPER_DASH_DURATION).target(BPrim.x - (particleEffect.getEmitters().first().getXOffsetValue().getLowMax() / 2)).start(tweenManager);
-            Tween.to(particleEffect, ParticleEffectAccessor.Y, Config.WISPER_DASH_DURATION).target(BPrim.y).start(tweenManager);
+            Tween.to(particleEffect, ParticleEffectAccessor.X, Config.WISPER_DASH_DURATION)
+                    .target(BPrim.x - (particleEffect.getEmitters().first().getXOffsetValue().getLowMax() / 2))
+                    .ease(Quad.OUT).start(tweenManager);
+            Tween.to(particleEffect, ParticleEffectAccessor.Y, Config.WISPER_DASH_DURATION).target(BPrim.y)
+                    .ease(Quad.OUT).start(tweenManager);
 
             timerTask = new TimerTask() {
                 @Override
@@ -97,6 +105,7 @@ public class Wisper {
             isDashUp = false;
             timer.schedule(timerTask, Config.WISPER_DASH_TIMEOUT);
         } else {
+            moveTo(x, y, tweenManager);
             Debug.Log("Dash not ready yet, " + (timerTask.scheduledExecutionTime() - System.currentTimeMillis()) + "ms remaining");
         }
     }

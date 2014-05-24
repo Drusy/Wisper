@@ -102,7 +102,7 @@ public class SettingsMenu implements Screen {
         final TextField saveFolderInput = new TextField(levelDirectory().path(), skin);
         saveFolderInput.setMessageText("Saves folder");
 
-        final TextButton backButton = new TextButton("Save configuration", skin);
+        final TextButton backButton = new TextButton("Save configuration", skin, "medium");
         backButton.pad(10);
 
         // Background image
@@ -181,11 +181,11 @@ public class SettingsMenu implements Screen {
 
     private void createTable(CheckBox vSyncCheckBox, TextField saveFolderInput, TextButton backButton) {
         table.padTop(100);
-        table.add(new Label("Preferences", skin, "big")).spaceBottom(125).colspan(2).expandX().row();
-        table.add(new Label("Vertical Synchronization", skin, "bold")).expandX();
+        table.add(new Label("Preferences", skin, "big-bold")).spaceBottom(125).colspan(2).expandX().row();
+        table.add(new Label("Vertical Synchronization", skin, "medium-bold")).expandX();
         table.add(vSyncCheckBox).left().expandX();
         table.row();
-        table.add(new Label("Saves folder", skin, "bold")).expandX().top();
+        table.add(new Label("Saves folder", skin, "medium-bold")).expandX().top();
         table.add(saveFolderInput).top().left().fillX().row();
         table.row();
         table.add(backButton).colspan(2).bottom().spaceBottom(125).expandY();

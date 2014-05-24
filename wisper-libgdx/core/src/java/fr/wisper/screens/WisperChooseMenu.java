@@ -95,7 +95,7 @@ public class WisperChooseMenu implements Screen {
 
         // Wisper
         batch = new SpriteBatch();
-        setWisper(new Wisper("particles/black-wisper-noadditive.p"));
+        setWisper(new Wisper("particles/black-wisper-big-noadditive.p"));
 
         // Animations
         initAnimations();
@@ -111,30 +111,31 @@ public class WisperChooseMenu implements Screen {
         tweenManager.update(Float.MIN_VALUE);
     }
 
-    public void fadeToMenu() {
-        Tween.set(table, TableAccessor.ALPHA).target(1).start(tweenManager);
+    public void fadeTo(final Screen screen) {
+        wisper.stopDraw();
 
+        Tween.set(table, TableAccessor.ALPHA).target(1).start(tweenManager);
         Tween.to(table, TableAccessor.ALPHA, Config.ANIMATION_DURATION / 3f).target(0).setCallback(new TweenCallback() {
             @Override
             public void onEvent(int type, BaseTween<?> source) {
-                ((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenu());
+                ((Game) Gdx.app.getApplicationListener()).setScreen(screen);
             }
         }).start(tweenManager);
     }
 
     private void createTable() {
         List<String> list = new List<String>(skin);
-        list.setItems(new String[] {"Black Wisper", "Blue Wisper", "Red Wisper"});
+        list.setItems(new String[] {"Thanatos", "Spark", "Bloody"});
         list.addListener(new ListListener(list));
 
         ScrollPane scrollPane = new ScrollPane(list, skin);
 
-        TextButton start = new TextButton("Start", skin, "bold");
+        TextButton start = new TextButton("Start", skin, "medium");
         start.addListener(new ClickListener() {
 
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                fadeToMenu();
+                fadeTo(new MainMenu());
             }
         });
         start.pad(10);
@@ -193,13 +194,13 @@ public class WisperChooseMenu implements Screen {
 
             switch (list.getSelectedIndex()) {
                 case BLACK_WISPER:
-                    setWisper(new Wisper("particles/black-wisper-noadditive.p"));
+                    setWisper(new Wisper("particles/black-wisper-big-noadditive.p"));
                     break;
                 case BLUE_WISPER:
-                    setWisper(new Wisper("particles/blue-wisper-noadditive.p"));
+                    setWisper(new Wisper("particles/blue-wisper-big-noadditive.p"));
                     break;
                 case RED_WISPER:
-                    setWisper(new Wisper("particles/red-wisper-noadditive.p"));
+                    setWisper(new Wisper("particles/red-wisper-big-noadditive.p"));
                     break;
                 default:
                     break;
@@ -221,7 +222,7 @@ public class WisperChooseMenu implements Screen {
         public boolean keyDown(int keyCode) {
             if(keyCode == Input.Keys.ESCAPE || keyCode == Input.Keys.BACK){
                 if (!fading) {
-                    wisperChooseMenu.fadeToMenu();
+                    wisperChooseMenu.fadeTo(new MainMenu());
                     fading = true;
                 }
             }

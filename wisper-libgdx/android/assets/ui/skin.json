@@ -12,22 +12,30 @@
         "white64":      { "file": "fonts/sketch_64.fnt" },
         "white64-bold": { "file": "fonts/sketch_64_bold.fnt" },
         "white32":      { "file": "fonts/sketch_32.fnt" },
-        "white32-bold": { "file": "fonts/sketch_32_bold.fnt" }
+        "white32-bold": { "file": "fonts/sketch_32_bold.fnt" },
+        "white40":      { "file": "fonts/sketch_40_bold.fnt" },
+        "white40-bold": { "file": "fonts/sketch_40_bold.fnt" },
+        "white50":      { "file": "fonts/sketch_50_bold.fnt" },
+        "white50-bold": { "file": "fonts/sketch_50_bold.fnt" }
     },
     "com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle": {
-        "default":  { "font": "white32", "fontColor": "black" },
-        "bold":     { "font": "white32-bold", "fontColor": "black" },
-        "big":      { "font": "white64", "fontColor": "black" },
-        "big-bold": { "font": "white64-bold", "fontColor": "black" }
+        "default":     { "font": "white32", "fontColor": "black" },
+        "bold":        { "font": "white32-bold", "fontColor": "black" },
+        "big":         { "font": "white64", "fontColor": "black" },
+        "big-bold":    { "font": "white64-bold", "fontColor": "black" },
+        "medium":      { "font": "white40", "fontColor": "black" },
+        "medium-bold": { "font": "white40-bold", "fontColor": "black" }
     },
     "com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle": {
-        "default":   { "up": "btn-black", "down": "btn-black", "font": "white32", "pressedOffsetX": 1, "pressedOffsetY": -1 },
-        "bold":      { "up": "btn-black", "down": "btn-black", "font": "white32-bold", "pressedOffsetX": 1, "pressedOffsetY": -1 },
-        "big":       { "up": "btn-black", "down": "btn-black", "font": "white64", "pressedOffsetX": 1, "pressedOffsetY": -1 },
-        "big-bold":  { "up": "btn-black", "down": "btn-black", "font": "white64-bold", "pressedOffsetX": 1, "pressedOffsetY": -1 }
+    "default":         { "up": "btn-black", "down": "btn-black", "font": "white32", "pressedOffsetX": 1, "pressedOffsetY": -1 },
+        "bold":        { "up": "btn-black", "down": "btn-black", "font": "white32-bold", "pressedOffsetX": 1, "pressedOffsetY": -1 },
+        "big":         { "up": "btn-black", "down": "btn-black", "font": "white64", "pressedOffsetX": 1, "pressedOffsetY": -1 },
+        "big-bold":    { "up": "btn-black", "down": "btn-black", "font": "white64-bold", "pressedOffsetX": 1, "pressedOffsetY": -1 },
+        "medium":      { "up": "btn-black", "down": "btn-black", "font": "white40", "pressedOffsetX": 1, "pressedOffsetY": -1 },
+        "medium-bold": { "up": "btn-black", "down": "btn-black", "font": "white40-bold", "pressedOffsetX": 1, "pressedOffsetY": -1 }
     },
     "com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle": {
-        "default": { "font": "white32", "fontColorUnselected": "black", "fontColorSelected": "lightgray", "selection": "list-selected" }
+        "default": { "font": "white40", "fontColorUnselected": "black", "fontColorSelected": "lightgray", "selection": "list-selected" }
     },
     "com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle": {
         "default": { "hScrollKnob": "btn-black", "vScrollKnob": "btn-black" }
@@ -36,7 +44,7 @@
         "default": { "font": "white32", "fontColor": "black", "checkboxOn": "checkbox-on", "checkboxOff": "checkbox-off", "checkboxOver": "checkbox-off" }
     },
     "com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle": {
-        "default": { "font": "white32", "fontColor": "black", "messageFontColor": "lightgray", "cursor": "textedit-cursor" }
+        "default": { "font": "white40", "fontColor": "black", "messageFontColor": "lightgray", "cursor": "textedit-cursor" }
     },
     "com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle": {
         "default": { "titleFont": "white32-bold", "titleFontColor": "black", "background": "btn-white"}

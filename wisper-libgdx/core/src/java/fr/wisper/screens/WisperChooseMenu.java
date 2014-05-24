@@ -9,7 +9,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -18,18 +20,28 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import fr.wisper.Game.WisperGame;
+import fr.wisper.entities.Wisper;
 import fr.wisper.tween.TableAccessor;
 import fr.wisper.utils.Config;
+import fr.wisper.utils.Debug;
 
 public class WisperChooseMenu implements Screen {
     // Stage
     private ExtendedStage stage;
     private Table table;
     private Skin skin;
+
+    // Wisper
+    private final int BLACK_WISPER = 0;
+    private final int BLUE_WISPER = 1;
+    private final int RED_WISPER = 2;
+    private SpriteBatch batch;
+    private Wisper wisper = null;
 
     // Tween
     private TweenManager tweenManager;
@@ -45,6 +57,11 @@ public class WisperChooseMenu implements Screen {
         // Stage
         stage.act(delta);
         stage.draw();
+
+        // Wisper
+        batch.begin();
+        wisper.draw(batch, delta);
+        batch.end();
 
         // Update animations
         tweenManager.update(delta);
@@ -76,6 +93,10 @@ public class WisperChooseMenu implements Screen {
         table.setFillParent(true);
         createTable();
 
+        // Wisper
+        batch = new SpriteBatch();
+        setWisper(new Wisper("particles/black-wisper-noadditive.p"));
+
         // Animations
         initAnimations();
     }
@@ -104,6 +125,7 @@ public class WisperChooseMenu implements Screen {
     private void createTable() {
         List<String> list = new List<String>(skin);
         list.setItems(new String[] {"Black Wisper", "Blue Wisper", "Red Wisper"});
+        list.addListener(new ListListener(list));
 
         ScrollPane scrollPane = new ScrollPane(list, skin);
 
@@ -120,11 +142,19 @@ public class WisperChooseMenu implements Screen {
         table.padTop(50);
         table.add(new Label("Select your Wisper", skin, "big-bold")).colspan(2).expandX().spaceBottom(125).row();
         table.add(scrollPane).padLeft(10).minWidth(250).top().left();
-        table.add(start).uniformX().expandX().expandY().center().row();
+        table.add(wisper).uniformX().expandX().expandY().center().row();
         table.add(start).colspan(2).expandX().bottom();
         table.padBottom(50);
 
         stage.addActor(table);
+    }
+
+    public void setWisper(Wisper wisper) {
+        if (this.wisper != null) {
+            this.wisper.dispose();
+        }
+
+        this.wisper = wisper;
     }
 
     @Override
@@ -144,8 +174,37 @@ public class WisperChooseMenu implements Screen {
 
     @Override
     public void dispose() {
+        batch.dispose();
         stage.dispose();
+        wisper.dispose();
         skin.dispose();
+    }
+
+    private class ListListener extends ChangeListener {
+        private List list;
+
+        public ListListener(List list) {
+            this.list = list;
+        }
+
+        @Override
+        public void changed(ChangeEvent event, Actor actor) {
+            Debug.Log(list.getSelected().toString() + " selected");
+
+            switch (list.getSelectedIndex()) {
+                case BLACK_WISPER:
+                    setWisper(new Wisper("particles/black-wisper-noadditive.p"));
+                    break;
+                case BLUE_WISPER:
+                    setWisper(new Wisper("particles/blue-wisper-noadditive.p"));
+                    break;
+                case RED_WISPER:
+                    setWisper(new Wisper("particles/red-wisper-noadditive.p"));
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     private class ExtendedStage extends Stage {

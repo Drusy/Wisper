@@ -1,24 +1,21 @@
 package fr.wisper.entities;
 
-
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenManager;
-import aurelienribon.tweenengine.equations.Linear;
 import aurelienribon.tweenengine.equations.Quad;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.viewport.Viewport;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import fr.wisper.tween.ParticleEffectAccessor;
 import fr.wisper.utils.Config;
 import fr.wisper.utils.Debug;
 
-import javax.xml.bind.ValidationException;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class Wisper {
+public class Wisper extends Actor {
     private ParticleEffect particleEffect;
     private boolean isParticleOn = true;
     private boolean isDashUp = true;
@@ -46,11 +43,13 @@ public class Wisper {
         particleEffect.start();
     }
 
-    public int getX() {
+    @Override
+    public float getX() {
         return (int)particleEffect.getEmitters().first().getX();
     }
 
-    public int getY() {
+    @Override
+    public float getY() {
         return (int)particleEffect.getEmitters().first().getY();
     }
 

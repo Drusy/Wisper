@@ -1,6 +1,8 @@
 package fr.wisper.entities;
 
+import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenManager;
 import aurelienribon.tweenengine.equations.Quad;
 import com.badlogic.gdx.Gdx;
@@ -73,7 +75,7 @@ public class Wisper extends Actor {
                 .ease(Quad.OUT).start(tweenManager);
     }
 
-    public void dash(int x, int y, TweenManager tweenManager) {
+    public void dash(final int x, final int y, final TweenManager tweenManager) {
         if (isDashUp) {
             Vector2 particlePos = new Vector2(getX(), getY());
             Vector2 requestedPos = new Vector2(x, y);
@@ -93,7 +95,12 @@ public class Wisper extends Actor {
                     .target(BPrim.x - (particleEffect.getEmitters().first().getXOffsetValue().getLowMax() / 2))
                     .ease(Quad.OUT).start(tweenManager);
             Tween.to(particleEffect, ParticleEffectAccessor.Y, Config.WISPER_DASH_DURATION).target(BPrim.y)
-                    .ease(Quad.OUT).start(tweenManager);
+                    .ease(Quad.OUT).setCallback(new TweenCallback() {
+                @Override
+                public void onEvent(int type, BaseTween<?> source) {
+                    moveTo(x, y, tweenManager);
+                }
+            }).start(tweenManager);
 
             timerTask = new TimerTask() {
                 @Override

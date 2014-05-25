@@ -12,9 +12,9 @@ public class ExitDialog extends Dialog {
     public ExitDialog(String title, Skin skin) {
         super(title, skin);
 
-        text(new Label("Do you want to leave Wisper ?", skin, "bold"));
-        button(new TextButton("Yes", skin, "bold"), YES);
-        button(new TextButton("NO", skin, "bold"), NO);
+        text(new Label("Do you want to leave Wisper ?", skin, "medium-bold"));
+        button(new TextButton("Yes", skin, "medium-bold"), YES).center();
+        button(new TextButton("NO", skin, "medium-bold"), NO).center();
         padTop(100);
         padBottom(30);
     }

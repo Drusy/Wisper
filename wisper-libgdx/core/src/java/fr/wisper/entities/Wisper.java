@@ -20,6 +20,7 @@ public class Wisper extends Actor {
     protected boolean isDashUp = true;
     protected Timer timer = new Timer();
     protected TimerTask timerTask;
+    protected int wisperOffset;
 
     public Wisper(String particleFile) {
         init(particleFile);
@@ -40,6 +41,8 @@ public class Wisper extends Actor {
         particleEffect.load(Gdx.files.internal(particleFile), Gdx.files.internal("particles"));
         particleEffect.setPosition(Config.APP_WIDTH / 2, Config.APP_HEIGHT / 2);
         particleEffect.start();
+
+        wisperOffset = (int)(particleEffect.getEmitters().first().getXOffsetValue().getLowMax() / 2);
     }
 
     @Override

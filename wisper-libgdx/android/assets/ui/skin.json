@@ -13,9 +13,9 @@
         "white64-bold": { "file": "fonts/sketch_64_bold.fnt" },
         "white32":      { "file": "fonts/sketch_32.fnt" },
         "white32-bold": { "file": "fonts/sketch_32_bold.fnt" },
-        "white40":      { "file": "fonts/sketch_40_bold.fnt" },
+        "white40":      { "file": "fonts/sketch_40.fnt" },
         "white40-bold": { "file": "fonts/sketch_40_bold.fnt" },
-        "white50":      { "file": "fonts/sketch_50_bold.fnt" },
+        "white50":      { "file": "fonts/sketch_50.fnt" },
         "white50-bold": { "file": "fonts/sketch_50_bold.fnt" }
     },
     "com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle": {
@@ -47,6 +47,6 @@
         "default": { "font": "white40", "fontColor": "black", "messageFontColor": "lightgray", "cursor": "textedit-cursor" }
     },
     "com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle": {
-        "default": { "titleFont": "white50", "titleFontColor": "black", "background": "btn-white"}
+        "default": { "titleFont": "white50-bold", "titleFontColor": "black", "background": "btn-white"}
     }
 }

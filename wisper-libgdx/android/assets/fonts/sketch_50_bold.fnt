@@ -1,6 +1,6 @@
 info face="SketchFlow Print" size=50 bold=1 italic=0 charset="" unicode=1 stretchH=100 smooth=1 aa=1 padding=0,0,0,0 spacing=1,1 outline=0
 common lineHeight=50 base=38 scaleW=400 scaleH=500 pages=1 packed=0 alphaChnl=0 redChnl=4 greenChnl=4 blueChnl=4
-page id=0 file="sketch_50_0.png"
+page id=0 file="sketch_50_bold_0.png"
 chars count=208
 char id=32   x=74    y=47    width=3     height=1     xoffset=-1    yoffset=49    xadvance=22    page=0  chnl=15
 char id=33   x=0     y=358   width=9     height=32    xoffset=5     yoffset=6     xadvance=19    page=0  chnl=15

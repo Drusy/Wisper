@@ -54,14 +54,14 @@ public class AnimatedWisper extends Wisper {
                 final TweenCallback resetPositionCallback = new TweenCallback() {
                     @Override
                     public void onEvent(int type, BaseTween<?> source) {
-                        moveToWithDuration(baseX, baseY, tweenManager, duration, equation, null);
+                        moveToWithDuration(baseX + wisperOffset, baseY, tweenManager, duration, equation, null);
                     }
                 };
 
                 TweenCallback moveRightCallBack = new TweenCallback() {
                     @Override
                     public void onEvent(int type, BaseTween<?> source) {
-                        moveToWithDuration(baseX + offset, baseY, tweenManager, duration, equation, resetPositionCallback);
+                        moveToWithDuration(baseX + offset + wisperOffset, baseY, tweenManager, duration, equation, resetPositionCallback);
                     }
                 };
 
@@ -85,19 +85,19 @@ public class AnimatedWisper extends Wisper {
                 final TweenCallback resetPositionCallback = new TweenCallback() {
                     @Override
                     public void onEvent(int type, BaseTween<?> source) {
-                        moveToWithDuration(baseX, baseY, tweenManager, duration, equation, null);
+                        moveToWithDuration(baseX + wisperOffset, baseY, tweenManager, duration, equation, null);
                     }
                 };
 
                 TweenCallback moveRightCallBack = new TweenCallback() {
                     @Override
                     public void onEvent(int type, BaseTween<?> source) {
-                        moveToWithDuration(baseX, baseY + offset, tweenManager, duration, equation, resetPositionCallback);
+                        moveToWithDuration(baseX + wisperOffset, baseY + offset, tweenManager, duration, equation, resetPositionCallback);
                     }
                 };
 
                 // First move left, then right callback, then reset
-                moveToWithDuration(baseX, baseY - offset, tweenManager, duration, equation, moveRightCallBack);
+                moveToWithDuration(baseX + wisperOffset, baseY - offset, tweenManager, duration, equation, moveRightCallBack);
             }
         });
 

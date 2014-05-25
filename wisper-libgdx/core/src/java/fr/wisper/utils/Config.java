@@ -18,6 +18,8 @@ public class Config {
     public static final float WISPER_DASH_DISTANCE = 300f;
     public static final float WISPER_DASH_DURATION = 0.25f;
     public static final long WISPER_DASH_TIMEOUT = 2000;
+    public static final long WISPER_TIME_BETWEEN_ANIMATIONS = 8000;
+    public static final long WISPER_TIME_FIRST_ANIMATIONS = 3000;
 
     public static boolean isAndroid() {
         return (Gdx.app.getType() == Application.ApplicationType.Android);

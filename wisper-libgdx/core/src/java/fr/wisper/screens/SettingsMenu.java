@@ -18,8 +18,8 @@ import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import fr.wisper.Game.WisperGame;
 import fr.wisper.assets.SettingsAssets;
-import fr.wisper.tween.SpriteAccessor;
-import fr.wisper.tween.TableAccessor;
+import fr.wisper.animations.tween.SpriteAccessor;
+import fr.wisper.animations.tween.TableAccessor;
 import fr.wisper.utils.Config;
 import fr.wisper.utils.Debug;
 

@@ -1,16 +1,13 @@
 package fr.wisper.entities;
 
-import aurelienribon.tweenengine.BaseTween;
-import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.TweenCallback;
-import aurelienribon.tweenengine.TweenManager;
+import aurelienribon.tweenengine.*;
 import aurelienribon.tweenengine.equations.Quad;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import fr.wisper.tween.ParticleEffectAccessor;
+import fr.wisper.animations.tween.ParticleEffectAccessor;
 import fr.wisper.utils.Config;
 import fr.wisper.utils.Debug;
 
@@ -18,11 +15,11 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Wisper extends Actor {
-    private ParticleEffect particleEffect;
-    private boolean isParticleOn = true;
-    private boolean isDashUp = true;
-    private Timer timer = new Timer();
-    private TimerTask timerTask;
+    protected ParticleEffect particleEffect;
+    protected boolean isParticleOn = true;
+    protected boolean isDashUp = true;
+    protected Timer timer = new Timer();
+    protected TimerTask timerTask;
 
     public Wisper(String particleFile) {
         init(particleFile);
@@ -38,7 +35,7 @@ public class Wisper extends Actor {
         isParticleOn = false;
     }
 
-    public void init(String particleFile) {
+    private void init(String particleFile) {
         particleEffect = new ParticleEffect();
         particleEffect.load(Gdx.files.internal(particleFile), Gdx.files.internal("particles"));
         particleEffect.setPosition(Config.APP_WIDTH / 2, Config.APP_HEIGHT / 2);
@@ -55,7 +52,7 @@ public class Wisper extends Actor {
         return (int)particleEffect.getEmitters().first().getY();
     }
 
-    public void moveTo(int x, int y, TweenManager tweenManager) {
+    public void moveTo(int x, int y, TweenManager tweenManager, TweenCallback callback) {
         //Vector2 particlePos = Config.getProjectedCoordinates(getX(), getY(), viewport);
         //Vector2 requestedPos = Config.getProjectedCoordinates(x, y, viewport);
 
@@ -67,12 +64,16 @@ public class Wisper extends Actor {
                 (float)Math.pow(particlePos.y - requestedPos.y, 2));
         double duration = distance / Config.WISPER_SPEED;
 
+        moveToWithDuration(x, y, tweenManager, duration, Quad.OUT, callback);
+    }
+
+    public void moveToWithDuration(int x, int y, TweenManager tweenManager, double duration, TweenEquation equation, TweenCallback callback) {
         tweenManager.killTarget(particleEffect);
         Tween.to(particleEffect, ParticleEffectAccessor.X, (float)duration)
                 .target(x - (particleEffect.getEmitters().first().getXOffsetValue().getLowMax() / 2))
-                .ease(Quad.OUT).start(tweenManager);
+                .ease(equation).start(tweenManager);
         Tween.to(particleEffect, ParticleEffectAccessor.Y, (float)duration).target(y)
-                .ease(Quad.OUT).start(tweenManager);
+                .ease(equation).start(tweenManager).setCallback(callback);
     }
 
     public void dash(final int x, final int y, final TweenManager tweenManager) {
@@ -98,7 +99,7 @@ public class Wisper extends Actor {
                     .ease(Quad.OUT).setCallback(new TweenCallback() {
                 @Override
                 public void onEvent(int type, BaseTween<?> source) {
-                    moveTo(x, y, tweenManager);
+                    moveTo(x, y, tweenManager, null);
                 }
             }).start(tweenManager);
 
@@ -111,7 +112,7 @@ public class Wisper extends Actor {
             isDashUp = false;
             timer.schedule(timerTask, Config.WISPER_DASH_TIMEOUT);
         } else {
-            moveTo(x, y, tweenManager);
+            moveTo(x, y, tweenManager, null);
             Debug.Log("Dash not ready yet, " + (timerTask.scheduledExecutionTime() - System.currentTimeMillis()) + "ms remaining");
         }
     }

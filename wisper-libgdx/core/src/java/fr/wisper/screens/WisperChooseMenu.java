@@ -25,8 +25,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import fr.wisper.Game.WisperGame;
-import fr.wisper.entities.Wisper;
-import fr.wisper.tween.TableAccessor;
+import fr.wisper.entities.AnimatedWisper;
+import fr.wisper.animations.tween.TableAccessor;
 import fr.wisper.utils.Config;
 import fr.wisper.utils.Debug;
 
@@ -41,7 +41,7 @@ public class WisperChooseMenu implements Screen {
     private final int BLUE_WISPER = 1;
     private final int RED_WISPER = 2;
     private SpriteBatch batch;
-    private Wisper wisper = null;
+    private AnimatedWisper wisper = null;
 
     // Tween
     private TweenManager tweenManager;
@@ -93,12 +93,12 @@ public class WisperChooseMenu implements Screen {
         table.setFillParent(true);
         createTable();
 
-        // Wisper
-        batch = new SpriteBatch();
-        setWisper(new Wisper("particles/black-wisper-big-noadditive.p"));
-
         // Animations
         initAnimations();
+
+        // Wisper
+        batch = new SpriteBatch();
+        setWisper(new AnimatedWisper("particles/black-wisper-big-noadditive.p"));
     }
 
     private void initAnimations() {
@@ -150,12 +150,13 @@ public class WisperChooseMenu implements Screen {
         stage.addActor(table);
     }
 
-    public void setWisper(Wisper wisper) {
+    public void setWisper(AnimatedWisper wisper) {
         if (this.wisper != null) {
             this.wisper.dispose();
         }
 
         this.wisper = wisper;
+        wisper.animate(tweenManager);
     }
 
     @Override
@@ -194,13 +195,13 @@ public class WisperChooseMenu implements Screen {
 
             switch (list.getSelectedIndex()) {
                 case BLACK_WISPER:
-                    setWisper(new Wisper("particles/black-wisper-big-noadditive.p"));
+                    setWisper(new AnimatedWisper("particles/black-wisper-big-noadditive.p"));
                     break;
                 case BLUE_WISPER:
-                    setWisper(new Wisper("particles/blue-wisper-big-noadditive.p"));
+                    setWisper(new AnimatedWisper("particles/blue-wisper-big-noadditive.p"));
                     break;
                 case RED_WISPER:
-                    setWisper(new Wisper("particles/red-wisper-big-noadditive.p"));
+                    setWisper(new AnimatedWisper("particles/red-wisper-big-noadditive.p"));
                     break;
                 default:
                     break;

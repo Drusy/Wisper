@@ -24,9 +24,9 @@ import fr.wisper.Game.WisperGame;
 import fr.wisper.assets.MenuAssets;
 import fr.wisper.dialog.ExitDialog;
 import fr.wisper.entities.Wisper;
-import fr.wisper.tween.ImageAccessor;
-import fr.wisper.tween.ParticleEffectAccessor;
-import fr.wisper.tween.SpriteAccessor;
+import fr.wisper.animations.tween.ImageAccessor;
+import fr.wisper.animations.tween.ParticleEffectAccessor;
+import fr.wisper.animations.tween.SpriteAccessor;
 import fr.wisper.utils.Config;
 
 public class MainMenu implements Screen {
@@ -128,7 +128,7 @@ public class MainMenu implements Screen {
                     // Dash code
                     wisper.dash((int) x, (int) y, tweenManager);
                 } else {
-                    wisper.moveTo((int) x, (int) y, tweenManager);
+                    wisper.moveTo((int) x, (int) y, tweenManager, null);
                 }
                 lastClickTime = currentTime;
 

@@ -29,7 +29,7 @@ import fr.wisper.animations.tween.ParticleEffectAccessor;
 import fr.wisper.animations.tween.SpriteAccessor;
 import fr.wisper.utils.Config;
 
-public class MainMenu implements Screen {
+public class MainMenu implements Screen, FadingScreen {
     // Stage
     private ExtendedStage stage;
     private Group group;
@@ -178,7 +178,7 @@ public class MainMenu implements Screen {
         group.addAction(Actions.moveBy(75, 75));
     }
 
-    private void fadeTo(final Screen screen) {
+    public void fadeTo(final Screen screen) {
         wisper.stopDraw();
 
         Tween.set(splash, SpriteAccessor.ALPHA).target(1).start(tweenManager);

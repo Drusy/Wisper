@@ -13,7 +13,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
@@ -29,10 +28,11 @@ import fr.wisper.entities.AnimatedWisper;
 import fr.wisper.animations.tween.TableAccessor;
 import fr.wisper.utils.Config;
 import fr.wisper.utils.Debug;
+import fr.wisper.utils.ExtendedStage;
 
-public class WisperChooseMenu implements Screen {
+public class WisperChooseMenu implements Screen, FadingScreen {
     // Stage
-    private ExtendedStage stage;
+    private ExtendedStage<WisperChooseMenu> stage;
     private Table table;
     private Skin skin;
 
@@ -83,7 +83,7 @@ public class WisperChooseMenu implements Screen {
     @Override
     public void show() {
         // Stage
-        stage = new ExtendedStage(this);
+        stage = new ExtendedStage(this, new MainMenu());
         Gdx.input.setInputProcessor(stage);
         Gdx.input.setCatchBackKey(true);
         skin = new Skin(Gdx.files.internal("ui/skin.json"), new TextureAtlas("ui/atlas.pack"));
@@ -206,29 +206,6 @@ public class WisperChooseMenu implements Screen {
                 default:
                     break;
             }
-        }
-    }
-
-    private class ExtendedStage extends Stage {
-        private WisperChooseMenu wisperChooseMenu;
-        private boolean fading = false;
-
-        public ExtendedStage(WisperChooseMenu wisperChooseMenu) {
-            super();
-
-            this.wisperChooseMenu = wisperChooseMenu;
-        }
-
-        @Override
-        public boolean keyDown(int keyCode) {
-            if(keyCode == Input.Keys.ESCAPE || keyCode == Input.Keys.BACK){
-                if (!fading) {
-                    wisperChooseMenu.fadeTo(new MainMenu());
-                    fading = true;
-                }
-            }
-
-            return super.keyDown(keyCode);
         }
     }
 }

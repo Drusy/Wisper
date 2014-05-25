@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Scaling;
@@ -22,8 +21,9 @@ import fr.wisper.animations.tween.SpriteAccessor;
 import fr.wisper.animations.tween.TableAccessor;
 import fr.wisper.utils.Config;
 import fr.wisper.utils.Debug;
+import fr.wisper.utils.ExtendedStage;
 
-public class SettingsMenu implements Screen {
+public class SettingsMenu implements Screen, FadingScreen {
     public static final String SAVE_FOLDER = "save-folder";
     public static final String V_SYNC = "v-sync";
 
@@ -33,7 +33,7 @@ public class SettingsMenu implements Screen {
     private TweenManager tweenManager;
 
     // Stage
-    private ExtendedStage stage;
+    private ExtendedStage<SettingsMenu> stage;
     private Table table;
     private Skin skin;
 
@@ -90,7 +90,7 @@ public class SettingsMenu implements Screen {
 
         // Stage
         skin = new Skin(Gdx.files.internal("ui/skin.json"), new TextureAtlas("ui/atlas.pack"));
-        stage = new ExtendedStage(this);
+        stage = new ExtendedStage(this, new MainMenu());
         table = new Table(skin);
         table.setFillParent(true);
         Gdx.input.setInputProcessor(stage);
@@ -158,7 +158,7 @@ public class SettingsMenu implements Screen {
                     Gdx.app.getPreferences(Config.GAME_NAME).flush();
                     Debug.Log("[Settings] Saved");
 
-                    fadeToMenu();
+                    fadeTo(new MainMenu());
                 }
             }
         };
@@ -166,7 +166,7 @@ public class SettingsMenu implements Screen {
         backButton.addListener(buttonHandler);
     }
 
-    public void fadeToMenu() {
+    public void fadeTo(final Screen screen) {
         Tween.set(splash, SpriteAccessor.ALPHA).target(1).start(tweenManager);
         Tween.set(table, TableAccessor.ALPHA).target(1).start(tweenManager);
 
@@ -174,7 +174,7 @@ public class SettingsMenu implements Screen {
         Tween.to(table, TableAccessor.ALPHA, Config.ANIMATION_DURATION / 3f).target(0).setCallback(new TweenCallback() {
             @Override
             public void onEvent(int type, BaseTween<?> source) {
-                ((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenu());
+                ((Game) Gdx.app.getApplicationListener()).setScreen(screen);
             }
         }).start(tweenManager);
     }
@@ -210,28 +210,5 @@ public class SettingsMenu implements Screen {
         skin.dispose();
         stage.dispose();
         SettingsAssets.dispose();
-    }
-
-    private class ExtendedStage extends Stage {
-        private SettingsMenu settingsMenu;
-        private boolean fading = false;
-
-        public ExtendedStage(SettingsMenu settingsMenu) {
-            super();
-
-            this.settingsMenu = settingsMenu;
-        }
-
-        @Override
-        public boolean keyDown(int keyCode) {
-            if(keyCode == Input.Keys.ESCAPE || keyCode == Input.Keys.BACK){
-                if (!fading) {
-                    settingsMenu.fadeToMenu();
-                    fading = true;
-                }
-            }
-
-            return super.keyDown(keyCode);
-        }
     }
 }

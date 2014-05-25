@@ -47,6 +47,6 @@
         "default": { "font": "white40", "fontColor": "black", "messageFontColor": "lightgray", "cursor": "textedit-cursor" }
     },
     "com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle": {
-        "default": { "titleFont": "white32-bold", "titleFontColor": "black", "background": "btn-white"}
+        "default": { "titleFont": "white50", "titleFontColor": "black", "background": "btn-white"}
     }
 }

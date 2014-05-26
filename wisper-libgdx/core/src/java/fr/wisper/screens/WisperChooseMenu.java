@@ -58,6 +58,7 @@ public class WisperChooseMenu implements Screen, FadingScreen {
         stage.draw();
 
         // Wisper
+        batch.setProjectionMatrix(WisperGame.Camera.combined);
         batch.begin();
         wisper.draw(batch, delta);
         batch.end();

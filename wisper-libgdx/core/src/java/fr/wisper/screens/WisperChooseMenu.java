@@ -134,7 +134,7 @@ public class WisperChooseMenu implements Screen, FadingScreen {
 
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                fadeTo(new MainMenu());
+                fadeTo(new GameScreen());
             }
         });
         start.pad(10);

@@ -5,14 +5,20 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import fr.wisper.Game.WisperGame;
+import fr.wisper.entities.Wisper;
+import fr.wisper.entities.WisperBox2d;
 import fr.wisper.utils.Config;
 import fr.wisper.utils.Debug;
 import fr.wisper.utils.ExtendedStage;
@@ -27,10 +33,13 @@ public class GameScreen implements Screen, FadingScreen {
     private static final int POSITION_ITERATIONS = 3;
     private World world;
     private Box2DDebugRenderer debugRenderer;
-    private Body wisperBody;
-    private Vector2 movement = new Vector2();
+
+    // Batch
+    private SpriteBatch batch;
+    private Array<Body> bodies = new Array<Body>();
 
     // Tween
+    WisperBox2d wisper;
     private TweenManager tweenManager;
 
     @Override
@@ -47,8 +56,19 @@ public class GameScreen implements Screen, FadingScreen {
 
         // Box2D
         world.step(TIME_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
-        wisperBody.applyForceToCenter(movement, true);
+        wisper.applyForceToCenter();
         debugRenderer.render(world, WisperGame.Camera.combined);
+
+        // Batch
+        batch.setProjectionMatrix(WisperGame.Camera.combined);
+        world.getBodies(bodies);
+        batch.begin();
+        for (Body body : bodies) {
+            if (body.getUserData() != null && body.getUserData() instanceof WisperBox2d) {
+                ((WisperBox2d) body.getUserData()).draw(batch, delta);
+            }
+        }
+        batch.end();
 
         // Update animations
         tweenManager.update(delta);
@@ -80,10 +100,11 @@ public class GameScreen implements Screen, FadingScreen {
         // Box2d
         world = new World(new Vector2(0, -9.81f), true); // newton -9.81f
         debugRenderer = new Box2DDebugRenderer();
-
         createGroundShape();
-        wisperBody = createWisperBody();
-        wisperBody.applyAngularImpulse(50, true);
+
+        // Wisper & Batch
+        batch = new SpriteBatch();
+        wisper = new WisperBox2d("particles/black-wisper-small-noadditive.p", world);
 
         // Animations
         initAnimations();
@@ -93,40 +114,20 @@ public class GameScreen implements Screen, FadingScreen {
         stage.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                movement.y = 500f;
+                wisper.movement.y = 500f;
 
                 return super.touchDown(event, x, y, pointer, button);
             }
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                movement.y = 0f;
+                wisper.movement.y = 0f;
 
                 super.touchUp(event, x, y, pointer, button);
             }
         });
     }
 
-    private Body createWisperBody() {
-        PolygonShape shape = new PolygonShape();
-        shape.setAsBox(2f, 4); // Meters
-
-        BodyDef wisperBodyDef = new BodyDef();
-        wisperBodyDef.type = BodyDef.BodyType.DynamicBody;
-        wisperBodyDef.position.set(Config.APP_WIDTH / 2, Config.APP_HEIGHT / 2);
-
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape = shape;
-        fixtureDef.density = 1f; // kg
-        fixtureDef.friction = .25f; // [0 - 1]
-        fixtureDef.restitution = .5f; // velocity loose
-
-        Body body = world.createBody(wisperBodyDef);
-        body.createFixture(fixtureDef);
-        shape.dispose();
-
-        return body;
-    }
 
     private void createGroundShape() {
         ChainShape shape = new ChainShape();
@@ -170,6 +171,8 @@ public class GameScreen implements Screen, FadingScreen {
 
     @Override
     public void dispose() {
+        batch.dispose();
+        wisper.dispose();
         stage.dispose();
         world.dispose();
         debugRenderer.dispose();

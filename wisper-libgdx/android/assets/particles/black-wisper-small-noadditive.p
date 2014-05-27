@@ -44,8 +44,8 @@ timelineCount: 1
 timeline0: 0.0
 - X Offset - 
 active: true
-lowMin: 10.0
-lowMax: 20.0
+lowMin: 1.0
+lowMax: 2.0
 highMin: 0.0
 highMax: 0.0
 relative: false
@@ -87,10 +87,10 @@ scaling0: 1.0
 timelineCount: 1
 timeline0: 0.0
 - Scale - 
-lowMin: 10.0
-lowMax: 10.0
-highMin: 150.0
-highMax: 150.0
+lowMin: 1.0
+lowMax: 1.0
+highMin: 3.0
+highMax: 3.0
 relative: false
 scalingCount: 2
 scaling0: 1.0
@@ -102,8 +102,8 @@ timeline1: 1.0
 active: true
 lowMin: 0.0
 lowMax: 0.0
-highMin: 300.0
-highMax: 300.0
+highMin: 0.0
+highMax: 0.0
 relative: false
 scalingCount: 1
 scaling0: 1.0
@@ -139,10 +139,10 @@ timelineCount: 1
 timeline0: 0.0
 - Gravity - 
 active: true
-lowMin: 10.0
-lowMax: 10.0
-highMin: 10.0
-highMax: 10.0
+lowMin: 7.0
+lowMax: 7.0
+highMin: 7.0
+highMax: 7.0
 relative: false
 scalingCount: 1
 scaling0: 1.0
@@ -159,9 +159,9 @@ colors5: 1.0
 colors6: 0.047058824
 colors7: 0.11764706
 colors8: 1.0
-colors9: 0.64705884
-colors10: 0.22745098
-colors11: 0.22745098
+colors9: 0.0
+colors10: 0.0
+colors11: 0.0
 timelineCount: 4
 timeline0: 0.0
 timeline1: 0.0
@@ -184,10 +184,10 @@ aligned: false
 additive: false
 behind: false
 - Image Path -
-particle_128.png
+particle.png
 
 
-shadow
+white
 - Delay -
 active: false
 - Duration - 
@@ -233,8 +233,8 @@ timelineCount: 1
 timeline0: 0.0
 - X Offset - 
 active: true
-lowMin: 10.0
-lowMax: 20.0
+lowMin: 1.0
+lowMax: 2.0
 highMin: 0.0
 highMax: 0.0
 relative: false
@@ -276,10 +276,10 @@ scaling0: 1.0
 timelineCount: 1
 timeline0: 0.0
 - Scale - 
-lowMin: 20.0
-lowMax: 20.0
-highMin: 150.0
-highMax: 150.0
+lowMin: 1.0
+lowMax: 1.0
+highMin: 2.0
+highMax: 2.0
 relative: false
 scalingCount: 2
 scaling0: 0.54901963
@@ -291,8 +291,8 @@ timeline1: 1.0
 active: true
 lowMin: 0.0
 lowMax: 0.0
-highMin: 200.0
-highMax: 200.0
+highMin: 0.0
+highMax: 0.0
 relative: false
 scalingCount: 2
 scaling0: 1.0
@@ -328,10 +328,10 @@ timelineCount: 1
 timeline0: 0.0
 - Gravity - 
 active: true
-lowMin: 0.0
-lowMax: 0.0
-highMin: 0.0
-highMax: 0.0
+lowMin: 4.0
+lowMax: 4.0
+highMin: 4.0
+highMax: 4.0
 relative: false
 scalingCount: 1
 scaling0: 1.0

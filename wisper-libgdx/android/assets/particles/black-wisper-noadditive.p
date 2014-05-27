@@ -1,4 +1,4 @@
-blue-wisper
+wisper
 - Delay -
 active: false
 - Duration - 
@@ -187,7 +187,7 @@ behind: false
 particle.png
 
 
-white
+shadow
 - Delay -
 active: false
 - Duration - 

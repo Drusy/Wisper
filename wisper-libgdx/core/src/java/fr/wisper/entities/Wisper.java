@@ -5,8 +5,10 @@ import aurelienribon.tweenengine.equations.Quad;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.utils.Array;
 import fr.wisper.animations.tween.ParticleEffectAccessor;
 import fr.wisper.utils.Config;
 import fr.wisper.utils.Debug;
@@ -20,10 +22,38 @@ public class Wisper extends Actor {
     protected boolean isDashUp = true;
     protected Timer timer = new Timer();
     protected TimerTask timerTask;
-    protected int wisperOffset;
+    protected float wisperOffset;
 
     public Wisper(String particleFile) {
         init(particleFile);
+    }
+
+    public void setPosition(float x, float y) {
+        particleEffect.setPosition(x - wisperOffset, y);
+    }
+
+    public void scale(float scaleValue) {
+        float scaling;
+
+        for (ParticleEmitter emitter : particleEffect.getEmitters()) {
+            scaling = emitter.getScale().getHighMax();
+            emitter.getScale().setHigh(scaling * scaleValue);
+
+            scaling = emitter.getScale().getLowMax();
+            emitter.getScale().setLow(scaling * scaleValue);
+
+            scaling = emitter.getVelocity().getHighMax();
+            emitter.getVelocity().setHigh(scaling * scaleValue);
+
+            scaling = emitter.getVelocity().getLowMax();
+            emitter.getVelocity().setLow(scaling * scaleValue);
+
+            scaling = emitter.getXOffsetValue().getLowMax();
+            emitter.getXOffsetValue().setLow(scaling * scaleValue);
+
+            scaling = emitter.getYOffsetValue().getLowMax();
+            emitter.getYOffsetValue().setLow(scaling * scaleValue);
+        }
     }
 
     public void draw(Batch batch, float delta) {
@@ -42,7 +72,7 @@ public class Wisper extends Actor {
         particleEffect.setPosition(Config.APP_WIDTH / 2, Config.APP_HEIGHT / 2);
         particleEffect.start();
 
-        wisperOffset = (int)(particleEffect.getEmitters().first().getXOffsetValue().getLowMax() / 2);
+        wisperOffset = particleEffect.getEmitters().first().getXOffsetValue().getLowMax() / 2;
     }
 
     @Override
@@ -55,7 +85,7 @@ public class Wisper extends Actor {
         return (int)particleEffect.getEmitters().first().getY();
     }
 
-    public void moveTo(int x, int y, TweenManager tweenManager, TweenCallback callback) {
+    public void moveTo(float x, float y, TweenManager tweenManager, TweenCallback callback) {
         //Vector2 particlePos = Config.getProjectedCoordinates(getX(), getY(), viewport);
         //Vector2 requestedPos = Config.getProjectedCoordinates(x, y, viewport);
 
@@ -70,7 +100,7 @@ public class Wisper extends Actor {
         moveToWithDuration(x, y, tweenManager, duration, Quad.OUT, callback);
     }
 
-    public void moveToWithDuration(int x, int y, TweenManager tweenManager, double duration, TweenEquation equation, TweenCallback callback) {
+    public void moveToWithDuration(float x, float y, TweenManager tweenManager, double duration, TweenEquation equation, TweenCallback callback) {
         tweenManager.killTarget(particleEffect);
         Tween.to(particleEffect, ParticleEffectAccessor.X, (float)duration)
                 .target(x - (particleEffect.getEmitters().first().getXOffsetValue().getLowMax() / 2))
@@ -79,7 +109,7 @@ public class Wisper extends Actor {
                 .ease(equation).start(tweenManager).setCallback(callback);
     }
 
-    public void dash(final int x, final int y, final TweenManager tweenManager) {
+    public void dash(final float x, final float y, final TweenManager tweenManager) {
         if (isDashUp) {
             Vector2 particlePos = new Vector2(getX(), getY());
             Vector2 requestedPos = new Vector2(x, y);

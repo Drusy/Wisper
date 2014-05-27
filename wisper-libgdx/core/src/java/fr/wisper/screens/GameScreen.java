@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import fr.wisper.Game.WisperGame;
+import fr.wisper.entities.AnimatedWisper;
 import fr.wisper.entities.Wisper;
 import fr.wisper.entities.WisperBox2d;
 import fr.wisper.utils.Config;
@@ -33,14 +34,19 @@ public class GameScreen implements Screen, FadingScreen {
     private static final int POSITION_ITERATIONS = 3;
     private World world;
     private Box2DDebugRenderer debugRenderer;
+    WisperBox2d wisper;
 
     // Batch
     private SpriteBatch batch;
     private Array<Body> bodies = new Array<Body>();
+    private int chosenWisper = Wisper.BLACK_WISPER;
 
     // Tween
-    WisperBox2d wisper;
     private TweenManager tweenManager;
+
+    public GameScreen(int chosenWisper) {
+        this.chosenWisper = chosenWisper;
+    }
 
     @Override
     public void render(float delta) {
@@ -104,7 +110,20 @@ public class GameScreen implements Screen, FadingScreen {
 
         // Wisper & Batch
         batch = new SpriteBatch();
-        wisper = new WisperBox2d("particles/black-wisper-small-noadditive.p", world);
+        switch (chosenWisper) {
+            case Wisper.BLACK_WISPER:
+                wisper = new WisperBox2d("particles/black-wisper-small-noadditive.p", world);
+                break;
+            case Wisper.BLUE_WISPER:
+                wisper = new WisperBox2d("particles/blue-wisper-small-noadditive.p", world);
+                break;
+            case Wisper.RED_WISPER:
+                wisper = new WisperBox2d("particles/red-wisper-small-noadditive.p", world);
+                break;
+            default:
+                break;
+        }
+
 
         // Animations
         initAnimations();

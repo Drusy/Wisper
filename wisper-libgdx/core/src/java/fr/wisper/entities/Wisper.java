@@ -17,6 +17,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Wisper extends Actor {
+    public static final int BLACK_WISPER = 0;
+    public static final int BLUE_WISPER = 1;
+    public static final int RED_WISPER = 2;
+
     protected ParticleEffect particleEffect;
     protected boolean isParticleOn = true;
     protected boolean isDashUp = true;

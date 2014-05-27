@@ -25,6 +25,7 @@ import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import fr.wisper.Game.WisperGame;
 import fr.wisper.entities.AnimatedWisper;
 import fr.wisper.animations.tween.TableAccessor;
+import fr.wisper.entities.Wisper;
 import fr.wisper.utils.Config;
 import fr.wisper.utils.Debug;
 import fr.wisper.utils.ExtendedStage;
@@ -34,13 +35,12 @@ public class WisperChooseMenu implements Screen, FadingScreen {
     private ExtendedStage<WisperChooseMenu> stage;
     private Table table;
     private Skin skin;
+    List<String> list;
 
     // Wisper
-    private final int BLACK_WISPER = 0;
-    private final int BLUE_WISPER = 1;
-    private final int RED_WISPER = 2;
+    private final String CHOSEN_WISPER = "chosen-wisper";
     private SpriteBatch batch;
-    private AnimatedWisper wisper = null;
+    private AnimatedWisper wisper;
 
     // Tween
     private TweenManager tweenManager;
@@ -99,7 +99,11 @@ public class WisperChooseMenu implements Screen, FadingScreen {
 
         // Wisper
         batch = new SpriteBatch();
-        setWisper(new AnimatedWisper("particles/black-wisper-big-noadditive.p"));
+        if (Gdx.app.getPreferences(Config.GAME_NAME).getInteger(CHOSEN_WISPER) != Wisper.BLACK_WISPER) {
+            list.setSelectedIndex(Gdx.app.getPreferences(Config.GAME_NAME).getInteger(CHOSEN_WISPER));
+        } else {
+            chooseWisper(Wisper.BLACK_WISPER);
+        }
     }
 
     private void initAnimations() {
@@ -122,12 +126,15 @@ public class WisperChooseMenu implements Screen, FadingScreen {
                 ((Game) Gdx.app.getApplicationListener()).setScreen(screen);
             }
         }).start(tweenManager);
+
+        Gdx.app.getPreferences(Config.GAME_NAME).putInteger(CHOSEN_WISPER, list.getSelectedIndex());
+        Gdx.app.getPreferences(Config.GAME_NAME).flush();
     }
 
     private void createTable() {
-        List<String> list = new List<String>(skin);
+        list = new List<String>(skin);
         list.setItems(new String[] {"Thanatos", "Spark", "Bloody"});
-        list.addListener(new ListListener(list));
+        list.addListener(new ListListener());
 
         ScrollPane scrollPane = new ScrollPane(list, skin);
 
@@ -136,7 +143,7 @@ public class WisperChooseMenu implements Screen, FadingScreen {
 
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                fadeTo(new GameScreen());
+                fadeTo(new GameScreen(list.getSelectedIndex()));
             }
         });
         start.pad(10);
@@ -183,30 +190,29 @@ public class WisperChooseMenu implements Screen, FadingScreen {
         skin.dispose();
     }
 
-    private class ListListener extends ChangeListener {
-        private List list;
-
-        public ListListener(List list) {
-            this.list = list;
+    public void chooseWisper(int chosenWisper)  {
+        switch (chosenWisper) {
+            case Wisper.BLACK_WISPER:
+                setWisper(new AnimatedWisper("particles/black-wisper-big-noadditive.p"));
+                break;
+            case Wisper.BLUE_WISPER:
+                setWisper(new AnimatedWisper("particles/blue-wisper-big-noadditive.p"));
+                break;
+            case Wisper.RED_WISPER:
+                setWisper(new AnimatedWisper("particles/red-wisper-big-noadditive.p"));
+                break;
+            default:
+                break;
         }
+    }
+
+    private class ListListener extends ChangeListener {
 
         @Override
         public void changed(ChangeEvent event, Actor actor) {
             Debug.Log(list.getSelected().toString() + " selected");
 
-            switch (list.getSelectedIndex()) {
-                case BLACK_WISPER:
-                    setWisper(new AnimatedWisper("particles/black-wisper-big-noadditive.p"));
-                    break;
-                case BLUE_WISPER:
-                    setWisper(new AnimatedWisper("particles/blue-wisper-big-noadditive.p"));
-                    break;
-                case RED_WISPER:
-                    setWisper(new AnimatedWisper("particles/red-wisper-big-noadditive.p"));
-                    break;
-                default:
-                    break;
-            }
+            chooseWisper(list.getSelectedIndex());
         }
     }
 }

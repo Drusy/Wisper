@@ -75,6 +75,7 @@ public class MainMenu implements Screen, FadingScreen {
 
     @Override
     public void resize(int width, int height) {
+        WisperGame.Camera.zoom = 1f;
         ScalingViewport stageViewport = new ScalingViewport(
             Scaling.fit,
             WisperGame.VirtualViewport.getVirtualWidth(),
@@ -99,7 +100,7 @@ public class MainMenu implements Screen, FadingScreen {
 
         // Stage
         skin = new Skin(Gdx.files.internal("ui/skin.json"), new TextureAtlas("ui/atlas.pack"));
-        stage = new ExtendedStage(skin, this);
+        stage = new ExtendedStage(skin);
         stage.addActor(group);
         stage.addActor(settingsImageButton);
         Gdx.input.setInputProcessor(stage);
@@ -244,7 +245,7 @@ public class MainMenu implements Screen, FadingScreen {
         private Skin skin;
         private ExitDialog dialog;
 
-        public ExtendedStage(Skin skin, MainMenu mainMenu) {
+        public ExtendedStage(Skin skin) {
             super();
 
             this.skin = skin;

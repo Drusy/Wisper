@@ -69,6 +69,7 @@ public class WisperChooseMenu implements Screen, FadingScreen {
 
     @Override
     public void resize(int width, int height) {
+        WisperGame.Camera.zoom = 1f;
         ScalingViewport stageViewport = new ScalingViewport(
                 Scaling.fit,
                 WisperGame.VirtualViewport.getVirtualWidth(),

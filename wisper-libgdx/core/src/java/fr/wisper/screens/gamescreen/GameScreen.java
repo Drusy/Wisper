@@ -1,30 +1,29 @@
-package fr.wisper.screens;
+package fr.wisper.screens.gamescreen;
 
 import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.ParticleEffect;
-import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import fr.wisper.Game.WisperGame;
-import fr.wisper.entities.AnimatedWisper;
+import fr.wisper.assets.GameScreenAssets;
 import fr.wisper.entities.Wisper;
 import fr.wisper.entities.WisperBox2d;
+import fr.wisper.screens.loading.LoadingScreen;
 import fr.wisper.utils.Config;
 import fr.wisper.utils.Debug;
 import fr.wisper.utils.ExtendedStage;
 
-public class GameScreen implements Screen, FadingScreen {
+public class GameScreen implements FadingScreen {
     // Stage
     private ExtendedStage<GameScreen> stage;
 
@@ -169,8 +168,19 @@ public class GameScreen implements Screen, FadingScreen {
         tweenManager = new TweenManager();
     }
 
-    public void fadeTo(final Screen screen) {
-        ((Game) Gdx.app.getApplicationListener()).setScreen(screen);
+    public void fadeTo(final FadingScreen screen) {
+        LoadingScreen loader = ((WisperGame) Gdx.app.getApplicationListener()).getLoader();
+        loader.setNextScreen(screen);
+    }
+
+    @Override
+    public AssetManager getAssetManager() {
+        return GameScreenAssets.manager;
+    }
+
+    @Override
+    public void load() {
+        GameScreenAssets.load();
     }
 
     @Override

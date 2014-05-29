@@ -7,23 +7,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import net.dermetfan.utils.libgdx.AnnotationAssetManager;
 import net.dermetfan.utils.libgdx.AnnotationAssetManager.Asset;
 
-public class SettingsAssets {
+public class GameScreenAssets {
 
     public static AnnotationAssetManager manager;
 
     public static void load() {
         manager = new AnnotationAssetManager();
-        manager.load(SettingsAssets.class);
+        manager.load(GameScreenAssets.class);
     }
-
-    @Asset
-    public static final AssetDescriptor<Texture>
-            SettingsSplash = new AssetDescriptor<Texture>("splash/settings.png", Texture.class);
-
-    @Asset
-    public static final AssetDescriptor<Skin>
-            GlobalSkin = new AssetDescriptor<Skin>("ui/skin.json", Skin.class, new SkinLoader.SkinParameter("ui/atlas.pack"));
-
 
     public static void dispose() {
         manager.dispose();

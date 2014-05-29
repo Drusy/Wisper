@@ -3,14 +3,14 @@ package fr.wisper.utils;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import fr.wisper.screens.FadingScreen;
+import fr.wisper.screens.gamescreen.FadingScreen;
 
 public class ExtendedStage<T extends FadingScreen> extends Stage {
     private T screen;
     private boolean fading = false;
-    private Screen nextScreen;
+    private FadingScreen nextScreen;
 
-    public ExtendedStage(T screen, Screen nextScreen) {
+    public ExtendedStage(T screen, FadingScreen nextScreen) {
         super();
 
         this.nextScreen = nextScreen;

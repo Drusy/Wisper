@@ -1,0 +1,75 @@
+
+loader.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+loading-frame
+  rotate: false
+  xy: 1, 162
+  size: 540, 60
+  orig: 540, 60
+  offset: 0, 0
+  index: -1
+loading-bar-anim
+  rotate: false
+  xy: 1, 111
+  size: 501, 49
+  orig: 501, 49
+  offset: 0, 0
+  index: 1
+loading-bar-anim
+  rotate: false
+  xy: 1, 60
+  size: 501, 49
+  orig: 501, 49
+  offset: 0, 0
+  index: 2
+loading-bar-anim
+  rotate: false
+  xy: 1, 9
+  size: 501, 49
+  orig: 501, 49
+  offset: 0, 0
+  index: 3
+libgdx-logo
+  rotate: false
+  xy: 543, 154
+  size: 408, 68
+  orig: 408, 68
+  offset: 0, 0
+  index: -1
+loading-bar-anim
+  rotate: false
+  xy: 504, 103
+  size: 501, 49
+  orig: 501, 49
+  offset: 0, 0
+  index: 4
+loading-bar-anim
+  rotate: false
+  xy: 504, 52
+  size: 501, 49
+  orig: 501, 49
+  offset: 0, 0
+  index: 5
+loading-bar1
+  rotate: false
+  xy: 504, 1
+  size: 501, 49
+  orig: 501, 49
+  offset: 0, 0
+  index: -1
+loading-bar-hidden
+  rotate: false
+  xy: 953, 168
+  size: 33, 54
+  orig: 33, 54
+  offset: 0, 0
+  index: -1
+loading-frame-bg
+  rotate: false
+  xy: 504, 155
+  size: 5, 5
+  orig: 5, 5
+  offset: 0, 0
+  index: -1

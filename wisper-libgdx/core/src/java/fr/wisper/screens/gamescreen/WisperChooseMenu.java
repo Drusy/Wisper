@@ -1,4 +1,4 @@
-package fr.wisper.screens;
+package fr.wisper.screens.gamescreen;
 
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Tween;
@@ -7,6 +7,7 @@ import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -23,14 +24,16 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import fr.wisper.Game.WisperGame;
+import fr.wisper.assets.WisperChooseAssets;
 import fr.wisper.entities.AnimatedWisper;
 import fr.wisper.animations.tween.TableAccessor;
 import fr.wisper.entities.Wisper;
+import fr.wisper.screens.loading.LoadingScreen;
 import fr.wisper.utils.Config;
 import fr.wisper.utils.Debug;
 import fr.wisper.utils.ExtendedStage;
 
-public class WisperChooseMenu implements Screen, FadingScreen {
+public class WisperChooseMenu implements FadingScreen {
     // Stage
     private ExtendedStage<WisperChooseMenu> stage;
     private Table table;
@@ -70,6 +73,8 @@ public class WisperChooseMenu implements Screen, FadingScreen {
     @Override
     public void resize(int width, int height) {
         WisperGame.Camera.zoom = 1f;
+        WisperGame.Camera.updateViewport();
+
         ScalingViewport stageViewport = new ScalingViewport(
                 Scaling.fit,
                 WisperGame.VirtualViewport.getVirtualWidth(),
@@ -87,7 +92,7 @@ public class WisperChooseMenu implements Screen, FadingScreen {
         stage = new ExtendedStage(this, new MainMenu());
         Gdx.input.setInputProcessor(stage);
         Gdx.input.setCatchBackKey(true);
-        skin = new Skin(Gdx.files.internal("ui/skin.json"), new TextureAtlas("ui/atlas.pack"));
+        skin = WisperChooseAssets.manager.get(WisperChooseAssets.GlobalSkin);
 
         // Table
         table = new Table(skin);
@@ -116,19 +121,30 @@ public class WisperChooseMenu implements Screen, FadingScreen {
         tweenManager.update(Float.MIN_VALUE);
     }
 
-    public void fadeTo(final Screen screen) {
+    public void fadeTo(final FadingScreen screen) {
         wisper.stopDraw();
 
         Tween.set(table, TableAccessor.ALPHA).target(1).start(tweenManager);
         Tween.to(table, TableAccessor.ALPHA, Config.ANIMATION_DURATION / 3f).target(0).setCallback(new TweenCallback() {
             @Override
             public void onEvent(int type, BaseTween<?> source) {
-                ((Game) Gdx.app.getApplicationListener()).setScreen(screen);
+                LoadingScreen loader = ((WisperGame) Gdx.app.getApplicationListener()).getLoader();
+                loader.setNextScreen(screen);
             }
         }).start(tweenManager);
 
         Gdx.app.getPreferences(Config.GAME_NAME).putInteger(CHOSEN_WISPER, list.getSelectedIndex());
         Gdx.app.getPreferences(Config.GAME_NAME).flush();
+    }
+
+    @Override
+    public AssetManager getAssetManager() {
+        return WisperChooseAssets.manager;
+    }
+
+    @Override
+    public void load() {
+        WisperChooseAssets.load();
     }
 
     private void createTable() {

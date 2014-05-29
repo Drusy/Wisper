@@ -40,13 +40,13 @@ public class SettingsMenu implements FadingScreen {
     private Skin skin;
 
     public static FileHandle levelDirectory() {
-        String prefsDir = Gdx.app.getPreferences(Config.GAME_NAME).getString(SAVE_FOLDER, Config.DEFAULT_SAVE_FOLDER).trim();
+        String prefsDir = WisperGame.preferences.getString(SAVE_FOLDER, Config.DEFAULT_SAVE_FOLDER).trim();
 
         return Gdx.files.absolute(prefsDir);
     }
 
     public static boolean vSync() {
-        return Gdx.app.getPreferences(Config.GAME_NAME).getBoolean(V_SYNC, true);
+        return WisperGame.preferences.getBoolean(V_SYNC, true);
     }
 
     @Override
@@ -142,8 +142,8 @@ public class SettingsMenu implements FadingScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if(event.getListenerActor() == vSyncCheckBox) {
-                    Gdx.app.getPreferences(Config.GAME_NAME).putBoolean(V_SYNC, vSyncCheckBox.isChecked());
-                    Gdx.app.getPreferences(Config.GAME_NAME).flush();
+                    WisperGame.preferences.putBoolean(V_SYNC, vSyncCheckBox.isChecked());
+                    WisperGame.preferences.flush();
 
                     Debug.Log("[Settings] vSync " + (vSync() ? "enabled" : "disabled"));
                 } else if(event.getListenerActor() == backButton) {
@@ -155,8 +155,8 @@ public class SettingsMenu implements FadingScreen {
                         actualLevelDirectory = saveFolderInput.getText().trim();
                     }
 
-                    Gdx.app.getPreferences(Config.GAME_NAME).putString(SAVE_FOLDER, actualLevelDirectory);
-                    Gdx.app.getPreferences(Config.GAME_NAME).flush();
+                    WisperGame.preferences.putString(SAVE_FOLDER, actualLevelDirectory);
+                    WisperGame.preferences.flush();
                     Debug.Log("[Settings] Saved");
 
                     fadeTo(new MainMenu());

@@ -2,6 +2,7 @@ package fr.wisper.Game;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.FPSLogger;
@@ -17,8 +18,11 @@ public class WisperGame extends Game {
     // Fps
     private FPSLogger fps;
 
+    // Preferences
+    public static Preferences preferences;
+
     // Loader
-    LoadingScreen loader;
+    private LoadingScreen loader;
 
     // Camera
     static public OrthographicCameraWithVirtualViewport Camera;
@@ -27,6 +31,9 @@ public class WisperGame extends Game {
 
     @Override
 	public void create () {
+        // Preferences
+        preferences = Gdx.app.getPreferences(Config.GAME_NAME);
+
         // Fps
         fps = new FPSLogger();
 

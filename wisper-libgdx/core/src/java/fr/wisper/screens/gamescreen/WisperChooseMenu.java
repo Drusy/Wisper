@@ -104,8 +104,8 @@ public class WisperChooseMenu implements FadingScreen {
 
         // Wisper
         batch = new SpriteBatch();
-        if (Gdx.app.getPreferences(Config.GAME_NAME).getInteger(CHOSEN_WISPER) != Wisper.BLACK_WISPER) {
-            list.setSelectedIndex(Gdx.app.getPreferences(Config.GAME_NAME).getInteger(CHOSEN_WISPER));
+        if (WisperGame.preferences.getInteger(CHOSEN_WISPER) != Wisper.BLACK_WISPER) {
+            list.setSelectedIndex(WisperGame.preferences.getInteger(CHOSEN_WISPER));
         } else {
             chooseWisper(Wisper.BLACK_WISPER);
         }
@@ -133,8 +133,8 @@ public class WisperChooseMenu implements FadingScreen {
             }
         }).start(tweenManager);
 
-        Gdx.app.getPreferences(Config.GAME_NAME).putInteger(CHOSEN_WISPER, list.getSelectedIndex());
-        Gdx.app.getPreferences(Config.GAME_NAME).flush();
+        WisperGame.preferences.putInteger(CHOSEN_WISPER, list.getSelectedIndex());
+        WisperGame.preferences.flush();
     }
 
     @Override

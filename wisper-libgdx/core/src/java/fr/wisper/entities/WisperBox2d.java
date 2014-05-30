@@ -1,8 +1,5 @@
 package fr.wisper.entities;
 
-import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.TweenEquation;
-import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -10,9 +7,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import fr.wisper.animations.tween.ParticleEffectAccessor;
 import fr.wisper.utils.Config;
-import fr.wisper.utils.Debug;
 
 public class WisperBox2d {
     // Box2d

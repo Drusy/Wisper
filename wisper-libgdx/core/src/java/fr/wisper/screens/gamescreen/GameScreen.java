@@ -24,6 +24,7 @@ import fr.wisper.assets.GameScreenAssets;
 import fr.wisper.entities.Wisper;
 import fr.wisper.entities.WisperBox2d;
 import fr.wisper.screens.loading.LoadingScreen;
+import fr.wisper.utils.Debug;
 import fr.wisper.utils.ExtendedStage;
 import net.dermetfan.utils.libgdx.box2d.Box2DMapObjectParser;
 
@@ -39,7 +40,7 @@ public class GameScreen implements FadingScreen {
     private Box2DDebugRenderer debugRenderer;
     private OrthogonalTiledMapRenderer mapRenderer;
     Box2DMapObjectParser box2dParser;
-    WisperBox2d wisper;
+    WisperBox2d wisper, testWisper;
     private MouseJointDef jointDef;
     private MouseJoint joint;
 
@@ -117,10 +118,12 @@ public class GameScreen implements FadingScreen {
         // Box2d
         world = new World(new Vector2(0, 0f), true); // newton -9.81f
         debugRenderer = new Box2DDebugRenderer();
+        initContactListener();
 
         // Wisper & Batch
         batch = new SpriteBatch();
         wisper = new WisperBox2d(chosenWisper, world);
+        testWisper = new WisperBox2d(Wisper.RED_WISPER, world);
 
         // Tiled map
         TiledMap map = new TmxMapLoader().load("tiledmap/tiledmap.tmx");
@@ -160,6 +163,40 @@ public class GameScreen implements FadingScreen {
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 super.touchUp(event, x, y, pointer, button);
             }
+        });
+    }
+
+    private void initContactListener() {
+        world.setContactListener(new ContactListener() {
+
+            @Override
+            public void beginContact(Contact contact) {
+                Body bodyA = contact.getFixtureA().getBody();
+                Body bodyB = contact.getFixtureB().getBody();
+
+                Debug.Log("Contact between " + bodyA.toString() + " and " + bodyB.toString());
+
+                if (bodyA.getUserData() != null && bodyA.getUserData() instanceof WisperBox2d) {
+                    Debug.Log("Fixture A is a Wisper");
+                }
+
+            }
+
+            @Override
+            public void endContact(Contact contact) {
+
+            }
+
+            @Override
+            public void preSolve(Contact contact, Manifold oldManifold) {
+
+            }
+
+            @Override
+            public void postSolve(Contact contact, ContactImpulse impulse) {
+
+            }
+
         });
     }
 

@@ -144,44 +144,21 @@ public class GameScreen implements FadingScreen {
         stage.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, final float x, final float y, int pointer, int button) {
-                //wisper.moveTo(x, y, tweenManager);
-                wisper.getWisperBody().setActive(true);
-                wisper.getWisperBody().setFixedRotation(true);
-                world.QueryAABB(new QueryCallback() {
-                    @Override
-                    public boolean reportFixture(Fixture fixture) {
-                        jointDef.bodyB = fixture.getBody();
-                        jointDef.target.set(x, y);
-
-                        joint = (MouseJoint) world.createJoint(jointDef);
-
-                        return false;
-                    }
-                }, x, y, x, y);
+                // Remove old joint
+                if (joint != null) {
+                    world.destroyJoint(joint);
+                    joint = null;
+                }
+                jointDef.target.set(wisper.getPosition());
+                joint = (MouseJoint) world.createJoint(jointDef);
+                joint.setTarget(new Vector2(x, y));
 
                 return super.touchDown(event, x, y, pointer, button);
             }
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-
-                if (joint != null) {
-                    world.destroyJoint(joint);
-                    joint = null;
-                    wisper.getWisperBody().setActive(false);
-                }
-
-
                 super.touchUp(event, x, y, pointer, button);
-            }
-
-            @Override
-            public void touchDragged(InputEvent event, float x, float y, int pointer) {
-                if (joint != null) {
-                    joint.setTarget(new Vector2(x, y));
-                }
-
-                super.touchDragged(event, x, y, pointer);
             }
         });
     }

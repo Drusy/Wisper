@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import fr.wisper.animations.tween.ParticleEffectAccessor;
 import fr.wisper.utils.Config;
+import fr.wisper.utils.Debug;
 
 public class WisperBox2d {
     // Box2d
@@ -48,30 +49,14 @@ public class WisperBox2d {
         return wisperBody;
     }
 
-    public void moveTo(float x, float y, TweenManager tweenManager) {
-        wisperBody.applyLinearImpulse(new Vector2(x, y), wisperBody.getPosition(), true);
-
-        /*Vector2 bodyPos = wisperBody.getPosition();
-        Vector2 requestedPos = new Vector2(x, y);
-
-        double distance = Math.sqrt(
-                (float)Math.pow(bodyPos.x - requestedPos.x, 2) +
-                        (float)Math.pow(bodyPos.y - requestedPos.y, 2));
-        double duration = (distance * 10) / Config.WISPER_SPEED;
-        System.out.println("" + duration);
-
-        moveToWithDuration(x, y, tweenManager, duration, Quad.OUT);*/
+    public Vector2 getPosition() {
+        return wisperBody.getPosition();
     }
 
-    public void moveToWithDuration(float x, float y, TweenManager tweenManager, double duration, TweenEquation equation) {
-        tweenManager.killTarget(wisperBody);
-        Tween.to(wisperBody, ParticleEffectAccessor.X, (float) duration)
-                .target(x)
-                .ease(equation).start(tweenManager);
-        Tween.to(wisperBody, ParticleEffectAccessor.Y, (float) duration).target(y)
-                .ease(equation).start(tweenManager);
+    public void resetBody() {
+        wisperBody.setLinearVelocity(0, 0);
+        wisperBody.setAngularVelocity(0);
     }
-
 
     public void applyForceToCenter() {
         wisperBody.applyForceToCenter(movement, true);
@@ -98,6 +83,7 @@ public class WisperBox2d {
 
         Body body = world.createBody(wisperBodyDef);
         body.createFixture(fixtureDef);
+        body.setFixedRotation(true);
         shape.dispose();
 
         body.setUserData(this);

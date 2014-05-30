@@ -6,7 +6,7 @@
  <tileset firstgid="21" name="plain_block" tilewidth="32" tileheight="32">
   <image source="tilesets/plain_block.png" width="96" height="96"/>
  </tileset>
- <tileset firstgid="41" name="rock_block" tilewidth="32" tileheight="32">
+ <tileset firstgid="30" name="rock_block" tilewidth="32" tileheight="32">
   <image source="tilesets/rock_block.png" width="64" height="64"/>
  </tileset>
  <layer name="tiles" width="400" height="240">
@@ -28,10 +28,5 @@
    <polyline points="0,0 1280,0"/>
   </object>
   <object name="block" type="object" x="6368" y="3680" width="64" height="160"/>
-  <object name="block" type="object" x="5952" y="3680" width="64" height="160">
-   <properties>
-    <property name="bodyType" value="DynamicBody"/>
-   </properties>
-  </object>
  </objectgroup>
 </map>

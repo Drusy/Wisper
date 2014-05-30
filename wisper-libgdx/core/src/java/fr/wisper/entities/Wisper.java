@@ -66,6 +66,10 @@ public class Wisper extends Actor {
         }
     }
 
+    public float getWisperOffset() {
+        return wisperOffset;
+    }
+
     public void stopDraw() {
         isParticleOn = false;
     }

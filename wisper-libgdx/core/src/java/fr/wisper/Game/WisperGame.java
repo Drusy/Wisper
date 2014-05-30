@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.FPSLogger;
 import fr.wisper.camera.MultipleVirtualViewportBuilder;
 import fr.wisper.camera.OrthographicCameraWithVirtualViewport;
 import fr.wisper.camera.VirtualViewport;
+import fr.wisper.screens.gamescreen.GameScreen;
 import fr.wisper.screens.gamescreen.MainMenu;
 import fr.wisper.screens.loading.LoadingScreen;
 import fr.wisper.utils.Config;
@@ -43,11 +44,10 @@ public class WisperGame extends Game {
                 Config.APP_WIDTH, Config.APP_HEIGHT);
         VirtualViewport = MultipleVirtualViewportBuilder.getVirtualViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Camera = new OrthographicCameraWithVirtualViewport(VirtualViewport);
-        Camera.position.set(Config.APP_WIDTH / 2, Config.APP_HEIGHT / 2, 0f);
 
         // Loader
         loader = new LoadingScreen(this);
-        loader.setNextScreen(new MainMenu());
+        loader.setNextScreen(new GameScreen(0));
 
         Debug.PrintDebugInformation();
 	}

@@ -1,23 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="40" height="24" tilewidth="32" tileheight="32">
- <tileset firstgid="1" name="night" tilewidth="32" tileheight="32">
-  <image source="../../../../../../../Downloads/tilesets/night.png" width="512" height="640"/>
+<map version="1.0" orientation="orthogonal" width="400" height="240" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="Stone Block" tilewidth="32" tileheight="32">
+  <image source="tilesets/stone_block.png" width="130" height="171"/>
  </tileset>
- <layer name="tiles" width="40" height="24">
+ <tileset firstgid="21" name="plain_block" tilewidth="32" tileheight="32">
+  <image source="tilesets/plain_block.png" width="96" height="96"/>
+ </tileset>
+ <tileset firstgid="41" name="rock_block" tilewidth="32" tileheight="32">
+  <image source="tilesets/rock_block.png" width="64" height="64"/>
+ </tileset>
+ <layer name="tiles" width="400" height="240">
   <data encoding="base64" compression="zlib">
-   eJztl8sNgzAMQC3RDehCbFBooYX+zAjdgNH7WCBScGl88JPewYdIzlMuEfFNix2e8YI9DnjFG4444R0f+MQXvlH/cH7e6+I/4ISf0kskUGxKL5Fg7deWXiKBiv/3F/22E/1sRD8b0c9G9LMR/Wx477fu57mfSn6/Cg+GOYct/Wo8GuYcVHz/3xb8ApOSKs4=
+   eJzt1TsKgEAMQEEb/7aiKN7/msYrrKy7wgw8SJlUaRoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgPfWaCu9BAC/s0dH6SUA+B3/A4AU/gcAKc7oKr0EAAAAAAAAAAAAAAAAAAAAAPCZNuqivsL5ach3OgAvjNEUzRXOT0u+0wEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJLcMbcDkQ==
   </data>
  </layer>
- <objectgroup name="objects" width="40" height="24">
-  <object name="environment_2" type="object" x="0" y="766">
-   <polyline points="0,0 1278,0 1279,-734 1,-734 1,-2"/>
+ <objectgroup name="objects" width="400" height="240">
+  <object name="border" type="object" x="5760" y="3456">
+   <properties>
+    <property name="friction" value="1"/>
+   </properties>
+   <polyline points="0,0 0,768 1280,768 1280,0 0,0"/>
   </object>
-  <object name="environment_in" type="object" x="32" y="736">
-   <polyline points="0,0 1215,-1 1216,-671 1,-672 0,1"/>
+  <object name="ground" type="object" x="5760" y="4192">
+   <properties>
+    <property name="friction" value="1"/>
+   </properties>
+   <polyline points="0,0 1280,0"/>
   </object>
-  <object name="tree" type="object" x="384" y="672" width="64" height="64"/>
-  <object name="tree_2" type="object" x="512" y="672" width="64" height="64"/>
-  <object name="tree_3" type="object" x="640" y="672" width="64" height="64"/>
-  <object name="tree_4" type="object" x="768" y="672" width="64" height="64"/>
+  <object name="block" type="object" x="6368" y="3680" width="64" height="160"/>
+  <object name="block" type="object" x="5952" y="3680" width="64" height="160">
+   <properties>
+    <property name="bodyType" value="DynamicBody"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>

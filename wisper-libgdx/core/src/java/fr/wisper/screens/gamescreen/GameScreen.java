@@ -22,6 +22,7 @@ import fr.wisper.screens.loading.LoadingScreen;
 import fr.wisper.utils.Config;
 import fr.wisper.utils.Debug;
 import fr.wisper.utils.ExtendedStage;
+import net.dermetfan.utils.libgdx.box2d.Box2DMapObjectParser;
 
 public class GameScreen implements FadingScreen {
     // Stage

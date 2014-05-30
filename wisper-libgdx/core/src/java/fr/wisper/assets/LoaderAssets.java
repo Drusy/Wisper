@@ -1,7 +1,6 @@
 package fr.wisper.assets;
 
 import com.badlogic.gdx.assets.AssetDescriptor;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import net.dermetfan.utils.libgdx.AnnotationAssetManager;
 import net.dermetfan.utils.libgdx.AnnotationAssetManager.Asset;

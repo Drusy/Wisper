@@ -47,7 +47,7 @@ public class WisperGame extends Game {
 
         // Loader
         loader = new LoadingScreen(this);
-        loader.setNextScreen(new GameScreen(0));
+        loader.setNextScreen(new MainMenu());
 
         Debug.PrintDebugInformation();
 	}

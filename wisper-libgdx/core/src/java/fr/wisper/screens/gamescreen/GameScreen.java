@@ -1,7 +1,10 @@
 package fr.wisper.screens.gamescreen;
 
+import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenManager;
+import aurelienribon.tweenengine.equations.Quad;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
@@ -20,22 +23,33 @@ import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import fr.wisper.Game.WisperGame;
 import fr.wisper.animations.tween.BodyAccessor;
+import fr.wisper.animations.tween.ParticleEffectAccessor;
 import fr.wisper.assets.GameScreenAssets;
 import fr.wisper.entities.Wisper;
 import fr.wisper.entities.WisperBox2d;
 import fr.wisper.screens.loading.LoadingScreen;
+import fr.wisper.utils.Config;
 import fr.wisper.utils.Debug;
 import fr.wisper.utils.ExtendedStage;
 import net.dermetfan.utils.libgdx.box2d.Box2DMapObjectParser;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class GameScreen implements FadingScreen {
+    // Global stuff
+    long lastClickTime = 0;
+    boolean isDashUp = true;
+    private Timer timer;
+    private TimerTask timerTask;
+    private static final float TIME_STEP = 1 / 60f;
+    private static final int VELOCITY_ITERATIONS = 8;
+    private static final int POSITION_ITERATIONS = 3;
+
     // Stage
     private ExtendedStage<GameScreen> stage;
 
     // Box2d
-    private static final float TIME_STEP = 1 / 60f;
-    private static final int VELOCITY_ITERATIONS = 8;
-    private static final int POSITION_ITERATIONS = 3;
     private World world;
     private Box2DDebugRenderer debugRenderer;
     private OrthogonalTiledMapRenderer mapRenderer;
@@ -89,6 +103,7 @@ public class GameScreen implements FadingScreen {
         batch.end();
 
         // Update animations
+        timer = new Timer();
         tweenManager.update(delta);
     }
 
@@ -135,26 +150,68 @@ public class GameScreen implements FadingScreen {
         jointDef = new MouseJointDef();
         jointDef.bodyA = box2dParser.getBodies().values().next();
         jointDef.collideConnected = true;
-        jointDef.maxForce = 500;
-        jointDef.dampingRatio = 15f;
         jointDef.bodyB = wisper.getWisperBody();
 
         // Animations
         initAnimations();
     }
 
+    private void moveWisperTo(float x, float y, float maxForce, float dampingRation) {
+        jointDef.maxForce = maxForce; // 500
+        jointDef.dampingRatio = dampingRation; // 15
+
+        if (joint != null) {
+            world.destroyJoint(joint);
+            joint = null;
+        }
+        jointDef.target.set(wisper.getPosition());
+        joint = (MouseJoint) world.createJoint(jointDef);
+        joint.setTarget(new Vector2(x, y));
+    }
+
+    private void dashWisperTo(float x, float y) {
+        if (isDashUp) {
+            Vector2 particlePos = wisper.getPosition();
+            Vector2 requestedPos = new Vector2(x, y);
+
+            double distance = Math.max(
+                    Math.sqrt(Math.pow(particlePos.x - requestedPos.x, 2) + Math.pow(particlePos.y - requestedPos.y, 2)),
+                    1) * 10;
+            double dashDistance = Math.min(distance, Config.WISPER_DASH_DISTANCE);
+            float alpha = (float)dashDistance / (float)distance;
+
+            Vector2 AB = new Vector2(requestedPos.x - particlePos.x, requestedPos.y - particlePos.y);
+            Vector2 ABPrim = new Vector2(alpha * AB.x, alpha * AB.y);
+            Vector2 BPrim = new Vector2(ABPrim.x + particlePos.x, ABPrim.y + particlePos.y);
+
+            moveWisperTo(BPrim.x, BPrim.y, 50000, 3.5f);
+
+            timerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    isDashUp = true;
+                }
+            };
+            isDashUp = false;
+            timer.schedule(timerTask, Config.WISPER_DASH_TIMEOUT);
+        } else {
+            moveWisperTo(x, y, 500, 15f);
+            Debug.Log("Dash not ready yet, " + (timerTask.scheduledExecutionTime() - System.currentTimeMillis()) + "ms remaining");
+        }
+    }
+
     private void initInputListener() {
         stage.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, final float x, final float y, int pointer, int button) {
-                // Remove old joint
-                if (joint != null) {
-                    world.destroyJoint(joint);
-                    joint = null;
+                long currentTime = System.currentTimeMillis();
+
+                if (currentTime - lastClickTime < Config.DOUBLE_TAP_INTERVAL) {
+                    dashWisperTo(x, y);
+                } else {
+                    moveWisperTo(x, y, 500, 15f);
                 }
-                jointDef.target.set(wisper.getPosition());
-                joint = (MouseJoint) world.createJoint(jointDef);
-                joint.setTarget(new Vector2(x, y));
+                lastClickTime = currentTime;
 
                 return super.touchDown(event, x, y, pointer, button);
             }

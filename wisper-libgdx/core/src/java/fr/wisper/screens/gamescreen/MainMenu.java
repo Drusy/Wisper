@@ -127,7 +127,6 @@ public class MainMenu implements FadingScreen {
                 long currentTime = System.currentTimeMillis();
 
                 if (currentTime - lastClickTime < Config.DOUBLE_TAP_INTERVAL) {
-                    // Dash code
                     wisper.dash((int) x, (int) y, tweenManager);
                 } else {
                     wisper.moveTo((int) x, (int) y, tweenManager, null);

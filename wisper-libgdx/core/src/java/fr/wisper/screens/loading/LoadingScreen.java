@@ -22,6 +22,9 @@ import fr.wisper.utils.Debug;
  * @author Mats Svensson
  */
 public class LoadingScreen implements Screen {
+    private final int LoadingBarWidth = 450;
+    private final int LoadingBarHeight = 450;
+
     private Stage stage;
     private FadingScreen nextScreen;
     private WisperGame game;
@@ -83,8 +86,8 @@ public class LoadingScreen implements Screen {
         logo.setY((Config.APP_HEIGHT - logo.getHeight()) / 2 + 100);
 
         // Place the loading frame in the middle of the screen
-        loadingFrame.setX((stage.getWidth() - loadingFrame.getWidth()) / 2);
-        loadingFrame.setY((stage.getHeight() - loadingFrame.getHeight()) / 2);
+        loadingFrame.setX((Config.APP_WIDTH - loadingFrame.getWidth()) / 2);
+        loadingFrame.setY((Config.APP_HEIGHT - loadingFrame.getHeight()) / 2);
 
         // Place the loading bar at the same spot as the frame, adjusted a few px
         loadingBar.setX(loadingFrame.getX() + 15);
@@ -95,10 +98,10 @@ public class LoadingScreen implements Screen {
         loadingBarHidden.setY(loadingBar.getY() - 3);
         // The start position and how far to move the hidden loading bar
         startX = loadingBarHidden.getX();
-        endX = 440;
+        endX = LoadingBarWidth - 10;
 
         // The rest of the hidden bar
-        loadingBg.setSize(450, 50);
+        loadingBg.setSize(LoadingBarWidth, LoadingBarHeight);
         loadingBg.setX(loadingBarHidden.getX() + 30);
         loadingBg.setY(loadingBarHidden.getY() + 3);
     }
@@ -143,7 +146,7 @@ public class LoadingScreen implements Screen {
         // Update positions (and size) to match the percentage
         loadingBarHidden.setX(startX + endX * percent);
         loadingBg.setX(loadingBarHidden.getX() + 30);
-        loadingBg.setWidth(450 - 450 * percent);
+        loadingBg.setWidth(LoadingBarWidth - LoadingBarWidth * percent);
         loadingBg.invalidate();
 
         // Show the loading screen

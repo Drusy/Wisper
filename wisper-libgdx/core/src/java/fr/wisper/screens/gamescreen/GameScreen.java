@@ -36,6 +36,7 @@ public class GameScreen implements FadingScreen {
     // Global stuff
     long lastClickTime = 0;
     boolean isDashUp = true;
+    boolean isMoveUp = true;
     private Timer timer;
     private TimerTask timerTask;
     private static final float TIME_STEP = 1 / 60f;
@@ -104,7 +105,7 @@ public class GameScreen implements FadingScreen {
 
     @Override
     public void resize(int width, int height) {
-        WisperGame.Camera.zoom = .1f;
+        WisperGame.Camera.zoom = Config.GAME_RATIO;
         WisperGame.Camera.updateViewport();
 
         ScalingViewport stageViewport = new ScalingViewport(
@@ -138,8 +139,8 @@ public class GameScreen implements FadingScreen {
 
         // Tiled map
         TiledMap map = new TmxMapLoader().load("tiledmap/tiledmap.tmx");
-        mapRenderer = new OrthogonalTiledMapRenderer(map, .1f);
-        box2dParser = new Box2DMapObjectParser(.1f);
+        mapRenderer = new OrthogonalTiledMapRenderer(map, Config.GAME_RATIO);
+        box2dParser = new Box2DMapObjectParser(Config.GAME_RATIO);
         box2dParser.load(world, map);
 
         // Joint
@@ -153,26 +154,31 @@ public class GameScreen implements FadingScreen {
     }
 
     private void moveWisperTo(float x, float y, float maxForce, float dampingRation) {
-        jointDef.maxForce = maxForce; // 500
-        jointDef.dampingRatio = dampingRation; // 15
+        if (isMoveUp) {
+            jointDef.maxForce = maxForce; // 500
+            jointDef.dampingRatio = dampingRation; // 15
 
-        if (joint != null) {
-            world.destroyJoint(joint);
-            joint = null;
+            if (joint != null) {
+                world.destroyJoint(joint);
+                joint = null;
+            }
+            jointDef.target.set(wisper.getPosition());
+            joint = (MouseJoint) world.createJoint(jointDef);
+            joint.setTarget(new Vector2(x, y));
+        } else {
+            Debug.Log("Wait until dash is over to move !");
         }
-        jointDef.target.set(wisper.getPosition());
-        joint = (MouseJoint) world.createJoint(jointDef);
-        joint.setTarget(new Vector2(x, y));
+
     }
 
     private void dashWisperTo(float x, float y) {
-        if (isDashUp) {
+        if (isDashUp && isMoveUp) {
             Vector2 particlePos = wisper.getPosition();
             Vector2 requestedPos = new Vector2(x, y);
 
             double distance = Math.max(
                     Math.sqrt(Math.pow(particlePos.x - requestedPos.x, 2) + Math.pow(particlePos.y - requestedPos.y, 2)),
-                    1) * 10;
+                    1)  / Config.GAME_RATIO;
             double dashDistance = Math.min(distance, Config.WISPER_DASH_DISTANCE);
             float alpha = (float)dashDistance / (float)distance;
 
@@ -180,7 +186,7 @@ public class GameScreen implements FadingScreen {
             Vector2 ABPrim = new Vector2(alpha * AB.x, alpha * AB.y);
             Vector2 BPrim = new Vector2(ABPrim.x + particlePos.x, ABPrim.y + particlePos.y);
 
-            moveWisperTo(BPrim.x, BPrim.y, 50000, 3.5f);
+            moveWisperTo(BPrim.x, BPrim.y, Config.BOX2D_WISPER_DASH_FORCE, Config.BOX2D_WISPER_DASH_DAMPING);
 
             timerTask = new TimerTask() {
                 @Override
@@ -188,10 +194,19 @@ public class GameScreen implements FadingScreen {
                     isDashUp = true;
                 }
             };
+
             isDashUp = false;
             timer.schedule(timerTask, Config.WISPER_DASH_TIMEOUT);
+
+            isMoveUp = false;
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    isMoveUp = true;
+                }
+            }, Config.BOX2D_WISPER_DASH_TIME);
         } else {
-            moveWisperTo(x, y, 500, 15f);
+            moveWisperTo(x, y, Config.BOX2D_WISPER_MOVE_FORCE, Config.BOX2D_WISPER_MOVE_DAMPING);
             Debug.Log("Dash not ready yet, " + (timerTask.scheduledExecutionTime() - System.currentTimeMillis()) + "ms remaining");
         }
     }
@@ -205,7 +220,7 @@ public class GameScreen implements FadingScreen {
                 if (currentTime - lastClickTime < Config.DOUBLE_TAP_INTERVAL) {
                     dashWisperTo(x, y);
                 } else {
-                    moveWisperTo(x, y, 500, 15f);
+                    moveWisperTo(x, y, Config.BOX2D_WISPER_MOVE_FORCE, Config.BOX2D_WISPER_MOVE_DAMPING);
                 }
                 lastClickTime = currentTime;
 

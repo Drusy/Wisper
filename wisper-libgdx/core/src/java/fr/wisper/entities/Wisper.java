@@ -3,18 +3,19 @@ package fr.wisper.entities;
 import aurelienribon.tweenengine.*;
 import aurelienribon.tweenengine.equations.Quad;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.ParticleEffect;
-import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Timer;
 import fr.wisper.animations.tween.ParticleEffectAccessor;
+import fr.wisper.assets.MenuAssets;
+import fr.wisper.dialog.SpeechBubble;
 import fr.wisper.utils.Config;
 import fr.wisper.utils.Debug;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Wisper extends Actor {
     public static final int BLACK_WISPER = 0;
@@ -25,8 +26,11 @@ public class Wisper extends Actor {
     protected boolean isParticleOn = true;
     protected boolean isDashUp = true;
     protected Timer timer = new Timer();
-    protected TimerTask timerTask;
+    protected Timer.Task timerTask;
     protected float wisperOffset;
+    protected SpeechBubble bubbleSpeech;
+
+    private List<String> speechList = new ArrayList<String>();
 
     public Wisper(String particleFile) {
         init(particleFile);
@@ -63,7 +67,30 @@ public class Wisper extends Actor {
     public void draw(Batch batch, float delta) {
         if (isParticleOn) {
             particleEffect.draw(batch, delta);
+
+            if (bubbleSpeech != null && bubbleSpeech.isAlive()) {
+                bubbleSpeech.act(delta);
+                bubbleSpeech.draw(batch, delta);
+            } else if (!speechList.isEmpty()) {
+                speech(speechList.get(0));
+                speechList.remove(0);
+            }
         }
+    }
+
+    public void startIntroSpeech() {
+        speechList.add("Hello, I'm a Wisper");
+        speechList.add("Click the world to make me move");
+        speechList.add("Double click to dash!");
+    }
+
+    public void speech(String string) {
+        NinePatch ninePatch = MenuAssets.manager.get(MenuAssets.BubbleAtlas).createPatch("bubble");
+        BitmapFont bubbleFont = MenuAssets.manager.get(MenuAssets.BubbleFont);
+        bubbleSpeech = new SpeechBubble(ninePatch, bubbleFont);
+        bubbleSpeech.init(string, getX(), getY());
+        bubbleSpeech.setFollow(this);
+        bubbleSpeech.setColor(new Color(0.3f, 0.3f, 0.3f, 0.7f));
     }
 
     public float getWisperOffset() {
@@ -71,6 +98,7 @@ public class Wisper extends Actor {
     }
 
     public void stopDraw() {
+        speechList.clear();
         isParticleOn = false;
     }
 
@@ -144,21 +172,24 @@ public class Wisper extends Actor {
                 }
             }).start(tweenManager);
 
-            timerTask = new TimerTask() {
+            timerTask = new Timer.Task() {
                 @Override
                 public void run() {
                     isDashUp = true;
                 }
             };
             isDashUp = false;
-            timer.schedule(timerTask, Config.WISPER_DASH_TIMEOUT);
+            timer.scheduleTask(timerTask, (long) Config.WISPER_DASH_TIMEOUT);
         } else {
             moveTo(x, y, tweenManager, null);
-            Debug.Log("Dash not ready yet, " + (timerTask.scheduledExecutionTime() - System.currentTimeMillis()) + "ms remaining");
+            Debug.Log("Dash not ready yet, " + (timerTask.getExecuteTimeMillis() - System.nanoTime() / 1000000) + "ms remaining");
         }
     }
 
     public void dispose() {
+        if (bubbleSpeech != null) {
+            bubbleSpeech.dispose();
+        }
         particleEffect.dispose();
     }
 }

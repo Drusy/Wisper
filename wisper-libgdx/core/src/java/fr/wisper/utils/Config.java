@@ -17,7 +17,7 @@ public class Config {
     public static final float DOUBLE_TAP_INTERVAL = 500f;
     public static final float WISPER_DASH_DISTANCE = 300f;
     public static final float WISPER_DASH_DURATION = 0.25f;
-    public static final long WISPER_DASH_TIMEOUT = 2000;
+    public static final float WISPER_DASH_TIMEOUT = 2f;
     public static final long WISPER_TIME_BETWEEN_ANIMATIONS = 8000;
     public static final long WISPER_TIME_FIRST_ANIMATIONS = 3000;
     public static final float GAME_RATIO = 0.1f;
@@ -25,7 +25,7 @@ public class Config {
     public static final float BOX2D_WISPER_MOVE_DAMPING = 15f;
     public static final float BOX2D_WISPER_DASH_FORCE = 50000f;
     public static final float BOX2D_WISPER_DASH_DAMPING = 3.5f;
-    public static final int BOX2D_WISPER_DASH_TIME = 350;
+    public static final float BOX2D_WISPER_DASH_TIME = 0.35f;
 
     public static boolean isAndroid() {
         return (Gdx.app.getType() == Application.ApplicationType.Android);

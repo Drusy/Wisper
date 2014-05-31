@@ -5,16 +5,19 @@ import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenEquation;
 import aurelienribon.tweenengine.TweenManager;
 import aurelienribon.tweenengine.equations.Cubic;
+import com.badlogic.gdx.utils.Timer;
 import fr.wisper.animations.wisper.WisperAnimation;
 import fr.wisper.utils.Config;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class AnimatedWisper extends Wisper {
     private List<WisperAnimation> animations = new ArrayList<WisperAnimation>();
     private Random random = new Random();
     private Timer animationTimer = new Timer();
-    private TimerTask animationTimerTask;
+    private Timer.Task animationTimerTask;
 
     public AnimatedWisper(String particleFile) {
         super(particleFile);
@@ -28,7 +31,7 @@ public class AnimatedWisper extends Wisper {
     }
 
     private void scheduleAnimation(final TweenManager tweenManager, final long delay) {
-        animationTimerTask = new TimerTask() {
+        animationTimerTask = new Timer.Task() {
             @Override
             public void run() {
                 // Start animation
@@ -38,7 +41,7 @@ public class AnimatedWisper extends Wisper {
                 scheduleAnimation(tweenManager, Config.WISPER_TIME_BETWEEN_ANIMATIONS);
             }
         };
-        animationTimer.schedule(animationTimerTask, delay);
+        animationTimer.scheduleTask(animationTimerTask, delay);
     }
 
     private void initRightLeftAnimation() {

@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Scaling;
+import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import fr.wisper.Game.WisperGame;
 import fr.wisper.animations.tween.BodyAccessor;
@@ -29,16 +30,13 @@ import fr.wisper.utils.Debug;
 import fr.wisper.utils.ExtendedStage;
 import net.dermetfan.utils.libgdx.box2d.Box2DMapObjectParser;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 public class GameScreen implements FadingScreen {
     // Global stuff
     long lastClickTime = 0;
     boolean isDashUp = true;
     boolean isMoveUp = true;
     private Timer timer;
-    private TimerTask timerTask;
+    private Timer.Task timerTask;
     private static final float TIME_STEP = 1 / 60f;
     private static final int VELOCITY_ITERATIONS = 8;
     private static final int POSITION_ITERATIONS = 3;
@@ -188,7 +186,7 @@ public class GameScreen implements FadingScreen {
 
             moveWisperTo(BPrim.x, BPrim.y, Config.BOX2D_WISPER_DASH_FORCE, Config.BOX2D_WISPER_DASH_DAMPING);
 
-            timerTask = new TimerTask() {
+            timerTask = new Timer.Task() {
                 @Override
                 public void run() {
                     isDashUp = true;
@@ -196,10 +194,10 @@ public class GameScreen implements FadingScreen {
             };
 
             isDashUp = false;
-            timer.schedule(timerTask, Config.WISPER_DASH_TIMEOUT);
+            timer.scheduleTask(timerTask, Config.WISPER_DASH_TIMEOUT);
 
             isMoveUp = false;
-            timer.schedule(new TimerTask() {
+            timer.scheduleTask(new Timer.Task() {
                 @Override
                 public void run() {
                     isMoveUp = true;
@@ -207,7 +205,7 @@ public class GameScreen implements FadingScreen {
             }, Config.BOX2D_WISPER_DASH_TIME);
         } else {
             moveWisperTo(x, y, Config.BOX2D_WISPER_MOVE_FORCE, Config.BOX2D_WISPER_MOVE_DAMPING);
-            Debug.Log("Dash not ready yet, " + (timerTask.scheduledExecutionTime() - System.currentTimeMillis()) + "ms remaining");
+            Debug.Log("Dash not ready yet, " + (timerTask.getExecuteTimeMillis() - System.nanoTime() / 1000000) + "ms remaining");
         }
     }
 

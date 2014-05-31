@@ -9,11 +9,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.ParticleEffect;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -24,6 +22,7 @@ import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import fr.wisper.Game.WisperGame;
 import fr.wisper.assets.MenuAssets;
 import fr.wisper.dialog.ExitDialog;
+import fr.wisper.dialog.SpeechBubble;
 import fr.wisper.entities.Wisper;
 import fr.wisper.animations.tween.ImageAccessor;
 import fr.wisper.animations.tween.ParticleEffectAccessor;
@@ -120,6 +119,7 @@ public class MainMenu implements FadingScreen {
     }
 
     private void initWisper() {
+        // Wisper
         wisper = new Wisper("particles/black-wisper-noadditive.p");
         wisperClickListener = new ClickListener() {
             @Override
@@ -137,7 +137,9 @@ public class MainMenu implements FadingScreen {
             }
         };
         stage.addListener(wisperClickListener);
+        wisper.startIntroSpeech();
     }
+
 
     private void applyPreferences() {
         Gdx.graphics.setVSync(SettingsMenu.vSync());

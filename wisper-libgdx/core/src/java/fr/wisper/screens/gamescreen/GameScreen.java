@@ -1,10 +1,7 @@
 package fr.wisper.screens.gamescreen;
 
-import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenManager;
-import aurelienribon.tweenengine.equations.Quad;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
@@ -23,7 +20,6 @@ import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import fr.wisper.Game.WisperGame;
 import fr.wisper.animations.tween.BodyAccessor;
-import fr.wisper.animations.tween.ParticleEffectAccessor;
 import fr.wisper.assets.GameScreenAssets;
 import fr.wisper.entities.Wisper;
 import fr.wisper.entities.WisperBox2d;
@@ -89,7 +85,7 @@ public class GameScreen implements FadingScreen {
         mapRenderer.setView(WisperGame.Camera);
         mapRenderer.getSpriteBatch().setProjectionMatrix(WisperGame.Camera.combined);
         mapRenderer.render();
-        debugRenderer.render(world, WisperGame.Camera.combined);
+        //debugRenderer.render(world, WisperGame.Camera.combined);
 
         // Batch
         batch.setProjectionMatrix(WisperGame.Camera.combined);
@@ -103,7 +99,6 @@ public class GameScreen implements FadingScreen {
         batch.end();
 
         // Update animations
-        timer = new Timer();
         tweenManager.update(delta);
     }
 
@@ -136,6 +131,7 @@ public class GameScreen implements FadingScreen {
         initContactListener();
 
         // Wisper & Batch
+        timer = new Timer();
         batch = new SpriteBatch();
         wisper = new WisperBox2d(chosenWisper, world);
         testWisper = new WisperBox2d(Wisper.RED_WISPER, world);

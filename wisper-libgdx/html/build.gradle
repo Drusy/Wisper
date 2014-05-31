@@ -54,7 +54,7 @@ draftWar {
 
 sourceCompatibility = 1.6
 sourceSets.main.java.srcDirs = [ "src/" ]
-sourceSets.main.compileClasspath += files(project(':core').sourceSets.main.allJava.srcDirs)
+sourceSets.main.compileClasspath += files(project(':core').sourceSets.main.java.srcDirs)
 
 
 eclipse.project {

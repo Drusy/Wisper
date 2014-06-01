@@ -33,6 +33,7 @@ public class Wisper extends Actor {
     private List<String> speechList = new ArrayList<String>();
 
     public Wisper(String particleFile) {
+        particleEffect = new ParticleEffect();
         init(particleFile);
     }
 
@@ -78,6 +79,10 @@ public class Wisper extends Actor {
         }
     }
 
+    public boolean isComplete() {
+        return particleEffect.isComplete();
+    }
+
     public void startIntroSpeech() {
         speechList.add("Hello, I'm a Wisper");
         speechList.add("Click the world to make me move");
@@ -103,7 +108,6 @@ public class Wisper extends Actor {
     }
 
     private void init(String particleFile) {
-        particleEffect = new ParticleEffect();
         particleEffect.load(Gdx.files.internal(particleFile), Gdx.files.internal("particles"));
         particleEffect.setPosition(Config.APP_WIDTH / 2, Config.APP_HEIGHT / 2);
         particleEffect.start();
@@ -186,7 +190,12 @@ public class Wisper extends Actor {
         }
     }
 
+    public void explode() {
+        init("particles/spark.p");
+    }
+
     public void dispose() {
+        stopDraw();
         if (bubbleSpeech != null) {
             bubbleSpeech.dispose();
         }

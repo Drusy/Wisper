@@ -22,6 +22,10 @@ public class WisperBox2d {
         wisperBody = createWisperBody(world);
     }
 
+    public float getAngle() {
+        return  wisperBody.getAngle();
+    }
+
     public WisperBox2d(int particleId, World world) {
         switch (particleId) {
             case Wisper.BLACK_WISPER:
@@ -51,6 +55,14 @@ public class WisperBox2d {
     public void resetBody() {
         wisperBody.setLinearVelocity(0, 0);
         wisperBody.setAngularVelocity(0);
+    }
+
+    public boolean isComplete() {
+        return wisper.isComplete();
+    }
+
+    public void explode() {
+        wisper.explode();
     }
 
     public void applyForceToCenter() {

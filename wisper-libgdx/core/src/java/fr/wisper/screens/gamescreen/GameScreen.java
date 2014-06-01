@@ -30,6 +30,10 @@ import fr.wisper.utils.Debug;
 import fr.wisper.utils.ExtendedStage;
 import net.dermetfan.utils.libgdx.box2d.Box2DMapObjectParser;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 public class GameScreen implements FadingScreen {
     // Global stuff
     long lastClickTime = 0;
@@ -49,9 +53,10 @@ public class GameScreen implements FadingScreen {
     private Box2DDebugRenderer debugRenderer;
     private OrthogonalTiledMapRenderer mapRenderer;
     Box2DMapObjectParser box2dParser;
-    WisperBox2d wisper, testWisper;
+    WisperBox2d wisper;
     private MouseJointDef jointDef;
     private MouseJoint joint;
+    private List<WisperBox2d> toRemove = new ArrayList<WisperBox2d>();
 
     // Batch
     private SpriteBatch batch;
@@ -77,6 +82,13 @@ public class GameScreen implements FadingScreen {
         stage.act(delta);
         stage.draw();
 
+        // Clear world
+        for (WisperBox2d entity : toRemove) {
+            world.destroyBody(entity.getWisperBody());
+            entity.dispose();
+        }
+        toRemove.clear();
+
         // Box2D
         world.step(TIME_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
         wisper.applyForceToCenter();
@@ -84,7 +96,7 @@ public class GameScreen implements FadingScreen {
         mapRenderer.setView(WisperGame.Camera);
         mapRenderer.getSpriteBatch().setProjectionMatrix(WisperGame.Camera.combined);
         mapRenderer.render();
-        //debugRenderer.render(world, WisperGame.Camera.combined);
+        debugRenderer.render(world, WisperGame.Camera.combined);
 
         // Batch
         batch.setProjectionMatrix(WisperGame.Camera.combined);
@@ -92,7 +104,11 @@ public class GameScreen implements FadingScreen {
         batch.begin();
         for (Body body : bodies) {
             if (body.getUserData() != null && body.getUserData() instanceof WisperBox2d) {
-                ((WisperBox2d) body.getUserData()).draw(batch, delta);
+                if (((WisperBox2d) body.getUserData()).isComplete()) {
+                    toRemove.add(((WisperBox2d) body.getUserData()));
+                } else {
+                    ((WisperBox2d) body.getUserData()).draw(batch, delta);
+                }
             }
         }
         batch.end();
@@ -133,7 +149,6 @@ public class GameScreen implements FadingScreen {
         timer = new Timer();
         batch = new SpriteBatch();
         wisper = new WisperBox2d(chosenWisper, world);
-        testWisper = new WisperBox2d(Wisper.RED_WISPER, world);
 
         // Tiled map
         TiledMap map = new TmxMapLoader().load("tiledmap/tiledmap.tmx");
@@ -209,32 +224,66 @@ public class GameScreen implements FadingScreen {
         }
     }
 
+    private void wisperShotWithDirection(float x, float y) {
+        WisperBox2d bullet = new WisperBox2d(Wisper.BLUE_WISPER, world);
+        bullet.getWisperBody().setBullet(true);
+        float forceFactor = 75;
+        float xForce = (x - wisper.getPosition().x) * forceFactor;
+        float yForce = (y - wisper.getPosition().y) * forceFactor;
+
+        float xOffset = xForce < 0 ? -1 : 1;
+        float yOffset = yForce < 0 ? -1 : 1;
+
+        bullet.getWisperBody().setTransform(wisper.getPosition().x + xOffset, wisper.getPosition().y + yOffset, wisper.getAngle());
+
+        bullet.getWisperBody().applyLinearImpulse(
+                new Vector2(xForce, yForce),
+                bullet.getPosition(),
+                true);
+    }
+
     private void initInputListener() {
         stage.addListener(new ClickListener() {
+            private int dragCount = 0;
+
+            private void resetDrag() {
+                dragCount = 0;
+            }
+
             @Override
             public boolean touchDown(InputEvent event, final float x, final float y, int pointer, int button) {
-                long currentTime = System.currentTimeMillis();
-
-                if (currentTime - lastClickTime < Config.DOUBLE_TAP_INTERVAL) {
-                    dashWisperTo(x, y);
-                } else {
-                    moveWisperTo(x, y, Config.BOX2D_WISPER_MOVE_FORCE, Config.BOX2D_WISPER_MOVE_DAMPING);
-                }
-                lastClickTime = currentTime;
-
                 return super.touchDown(event, x, y, pointer, button);
             }
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                if (dragCount > 7) {
+                    wisperShotWithDirection(x, y);
+                    resetDrag();
+                } else {
+                    long currentTime = System.currentTimeMillis();
+
+                    if (currentTime - lastClickTime < Config.DOUBLE_TAP_INTERVAL) {
+                        dashWisperTo(x, y);
+                    } else {
+                        moveWisperTo(x, y, Config.BOX2D_WISPER_MOVE_FORCE, Config.BOX2D_WISPER_MOVE_DAMPING);
+                    }
+                    lastClickTime = currentTime;
+                }
                 super.touchUp(event, x, y, pointer, button);
+            }
+
+            @Override
+            public void touchDragged(InputEvent event, float x, float y, int pointer) {
+                ++dragCount;
+
+                super.touchDragged(event, x, y, pointer);
             }
         });
     }
 
     private void initContactListener() {
         world.setContactListener(new ContactListener() {
-
             @Override
             public void beginContact(Contact contact) {
                 Body bodyA = contact.getFixtureA().getBody();
@@ -242,8 +291,14 @@ public class GameScreen implements FadingScreen {
 
                 Debug.Log("Contact between " + bodyA.toString() + " and " + bodyB.toString());
 
-                if (bodyA.getUserData() != null && bodyA.getUserData() instanceof WisperBox2d) {
-                    Debug.Log("Fixture A is a Wisper");
+                if (bodyA.getUserData() != null && bodyA.getUserData() instanceof WisperBox2d
+                        && bodyA.getUserData() != wisper && bodyB.isBullet()) {
+                    toRemove.add(((WisperBox2d) bodyB.getUserData()));
+                    ((WisperBox2d)bodyA.getUserData()).explode();
+                } else if (bodyB.getUserData() != null && bodyB.getUserData() instanceof WisperBox2d
+                        && bodyB.getUserData() != wisper && bodyA.isBullet()) {
+                    toRemove.add(((WisperBox2d) bodyA.getUserData()));
+                    ((WisperBox2d)bodyB.getUserData()).explode();
                 }
 
             }

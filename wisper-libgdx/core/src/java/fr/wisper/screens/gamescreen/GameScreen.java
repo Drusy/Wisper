@@ -22,6 +22,8 @@ import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import fr.wisper.Game.WisperGame;
 import fr.wisper.animations.tween.BodyAccessor;
 import fr.wisper.assets.GameScreenAssets;
+import fr.wisper.entities.AbstractBox2dWrapper;
+import fr.wisper.entities.BulletBox2d;
 import fr.wisper.entities.Wisper;
 import fr.wisper.entities.WisperBox2d;
 import fr.wisper.screens.loading.LoadingScreen;
@@ -32,7 +34,6 @@ import net.dermetfan.utils.libgdx.box2d.Box2DMapObjectParser;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class GameScreen implements FadingScreen {
     // Global stuff
@@ -56,7 +57,7 @@ public class GameScreen implements FadingScreen {
     WisperBox2d wisper;
     private MouseJointDef jointDef;
     private MouseJoint joint;
-    private List<WisperBox2d> toRemove = new ArrayList<WisperBox2d>();
+    private List<AbstractBox2dWrapper> toRemove = new ArrayList<AbstractBox2dWrapper>();
 
     // Batch
     private SpriteBatch batch;
@@ -83,15 +84,14 @@ public class GameScreen implements FadingScreen {
         stage.draw();
 
         // Clear world
-        for (WisperBox2d entity : toRemove) {
-            world.destroyBody(entity.getWisperBody());
+        for (AbstractBox2dWrapper entity : toRemove) {
+            world.destroyBody(entity.getBody());
             entity.dispose();
         }
         toRemove.clear();
 
         // Box2D
         world.step(TIME_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
-        wisper.applyForceToCenter();
 
         mapRenderer.setView(WisperGame.Camera);
         mapRenderer.getSpriteBatch().setProjectionMatrix(WisperGame.Camera.combined);
@@ -103,11 +103,11 @@ public class GameScreen implements FadingScreen {
         world.getBodies(bodies);
         batch.begin();
         for (Body body : bodies) {
-            if (body.getUserData() != null && body.getUserData() instanceof WisperBox2d) {
-                if (((WisperBox2d) body.getUserData()).isComplete()) {
+            if (body.getUserData() != null && body.getUserData() instanceof AbstractBox2dWrapper) {
+                if (((AbstractBox2dWrapper) body.getUserData()).isComplete()) {
                     toRemove.add(((WisperBox2d) body.getUserData()));
                 } else {
-                    ((WisperBox2d) body.getUserData()).draw(batch, delta);
+                    ((AbstractBox2dWrapper) body.getUserData()).draw(batch, delta);
                 }
             }
         }
@@ -160,7 +160,7 @@ public class GameScreen implements FadingScreen {
         jointDef = new MouseJointDef();
         jointDef.bodyA = box2dParser.getBodies().values().next();
         jointDef.collideConnected = true;
-        jointDef.bodyB = wisper.getWisperBody();
+        jointDef.bodyB = wisper.getBody();
 
         // Animations
         initAnimations();
@@ -181,7 +181,6 @@ public class GameScreen implements FadingScreen {
         } else {
             Debug.Log("Wait until dash is over to move !");
         }
-
     }
 
     private void dashWisperTo(float x, float y) {
@@ -225,8 +224,7 @@ public class GameScreen implements FadingScreen {
     }
 
     private void wisperShotWithDirection(float x, float y) {
-        WisperBox2d bullet = new WisperBox2d(Wisper.BLUE_WISPER, world);
-        bullet.getWisperBody().setBullet(true);
+        BulletBox2d bullet = new BulletBox2d(wisper.getType(), world);
         float forceFactor = 75;
         float xForce = (x - wisper.getPosition().x) * forceFactor;
         float yForce = (y - wisper.getPosition().y) * forceFactor;
@@ -234,9 +232,9 @@ public class GameScreen implements FadingScreen {
         float xOffset = xForce < 0 ? -1 : 1;
         float yOffset = yForce < 0 ? -1 : 1;
 
-        bullet.getWisperBody().setTransform(wisper.getPosition().x + xOffset, wisper.getPosition().y + yOffset, wisper.getAngle());
+        bullet.getBody().setTransform(wisper.getPosition().x + xOffset, wisper.getPosition().y + yOffset, wisper.getAngle());
 
-        bullet.getWisperBody().applyLinearImpulse(
+        bullet.getBody().applyLinearImpulse(
                 new Vector2(xForce, yForce),
                 bullet.getPosition(),
                 true);
@@ -257,7 +255,7 @@ public class GameScreen implements FadingScreen {
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                if (dragCount > 7) {
+                if (dragCount > 5) {
                     wisperShotWithDirection(x, y);
                     resetDrag();
                 } else {
@@ -288,8 +286,6 @@ public class GameScreen implements FadingScreen {
             public void beginContact(Contact contact) {
                 Body bodyA = contact.getFixtureA().getBody();
                 Body bodyB = contact.getFixtureB().getBody();
-
-                Debug.Log("Contact between " + bodyA.toString() + " and " + bodyB.toString());
 
                 if (bodyA.getUserData() != null && bodyA.getUserData() instanceof WisperBox2d
                         && bodyA.getUserData() != wisper && bodyB.isBullet()) {

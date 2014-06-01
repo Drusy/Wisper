@@ -27,7 +27,7 @@ public class Wisper extends Actor {
     protected boolean isDashUp = true;
     protected Timer timer = new Timer();
     protected Timer.Task timerTask;
-    protected float wisperOffset;
+    protected float offset;
     protected SpeechBubble bubbleSpeech;
 
     private List<String> speechList = new ArrayList<String>();
@@ -38,7 +38,7 @@ public class Wisper extends Actor {
     }
 
     public void setPosition(float x, float y) {
-        particleEffect.setPosition(x - wisperOffset, y);
+        particleEffect.setPosition(x - offset, y);
     }
 
     public void scale(float scaleValue) {
@@ -98,8 +98,8 @@ public class Wisper extends Actor {
         bubbleSpeech.setColor(new Color(0.3f, 0.3f, 0.3f, 0.7f));
     }
 
-    public float getWisperOffset() {
-        return wisperOffset;
+    public float getOffset() {
+        return offset;
     }
 
     public void stopDraw() {
@@ -112,7 +112,7 @@ public class Wisper extends Actor {
         particleEffect.setPosition(Config.APP_WIDTH / 2, Config.APP_HEIGHT / 2);
         particleEffect.start();
 
-        wisperOffset = particleEffect.getEmitters().first().getXOffsetValue().getLowMax() / 2;
+        offset = particleEffect.getEmitters().first().getXOffsetValue().getLowMax() / 2;
     }
 
     @Override

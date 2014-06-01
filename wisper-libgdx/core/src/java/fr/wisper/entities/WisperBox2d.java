@@ -1,7 +1,6 @@
 package fr.wisper.entities;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
@@ -9,22 +8,10 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import fr.wisper.utils.Config;
 
-public class WisperBox2d {
-    // Box2d
-    private Body wisperBody;
-    public Vector2 movement = new Vector2();
-
+public class WisperBox2d extends AbstractBox2dWrapper {
     // Wisper
     private Wisper wisper;
-
-    public WisperBox2d(String particleFile, World world) {
-        wisper = new Wisper(particleFile);
-        wisperBody = createWisperBody(world);
-    }
-
-    public float getAngle() {
-        return  wisperBody.getAngle();
-    }
+    private int wisperType;
 
     public WisperBox2d(int particleId, World world) {
         switch (particleId) {
@@ -40,23 +27,16 @@ public class WisperBox2d {
             default:
                 break;
         }
+        wisperType = particleId;
 
-        wisperBody = createWisperBody(world);
+        body = createWisperBody(world);
     }
 
-    public Body getWisperBody() {
-        return wisperBody;
+    public int getType() {
+        return wisperType;
     }
 
-    public Vector2 getPosition() {
-        return wisperBody.getPosition();
-    }
-
-    public void resetBody() {
-        wisperBody.setLinearVelocity(0, 0);
-        wisperBody.setAngularVelocity(0);
-    }
-
+    @Override
     public boolean isComplete() {
         return wisper.isComplete();
     }
@@ -65,12 +45,9 @@ public class WisperBox2d {
         wisper.explode();
     }
 
-    public void applyForceToCenter() {
-        wisperBody.applyForceToCenter(movement, true);
-    }
-
-    public void draw(SpriteBatch batch, float delta) {
-        wisper.setPosition(wisperBody.getPosition().x - wisper.getWisperOffset() / 2, wisperBody.getPosition().y);
+    @Override
+    public void draw(Batch batch, float delta) {
+        wisper.setPosition(body.getPosition().x - wisper.getOffset() / 2, body.getPosition().y);
         wisper.draw(batch, delta);
     }
 
@@ -98,6 +75,7 @@ public class WisperBox2d {
         return body;
     }
 
+    @Override
     public void dispose() {
         wisper.dispose();
     }

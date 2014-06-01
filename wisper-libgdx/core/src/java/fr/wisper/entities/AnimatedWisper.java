@@ -57,14 +57,14 @@ public class AnimatedWisper extends Wisper {
                 final TweenCallback resetPositionCallback = new TweenCallback() {
                     @Override
                     public void onEvent(int type, BaseTween<?> source) {
-                        moveToWithDuration(baseX + wisperOffset, baseY, tweenManager, duration, equation, null);
+                        moveToWithDuration(baseX + AnimatedWisper.this.offset, baseY, tweenManager, duration, equation, null);
                     }
                 };
 
                 TweenCallback moveRightCallBack = new TweenCallback() {
                     @Override
                     public void onEvent(int type, BaseTween<?> source) {
-                        moveToWithDuration(baseX + offset + wisperOffset, baseY, tweenManager, duration, equation, resetPositionCallback);
+                        moveToWithDuration(baseX + offset + AnimatedWisper.this.offset, baseY, tweenManager, duration, equation, resetPositionCallback);
                     }
                 };
 
@@ -88,19 +88,19 @@ public class AnimatedWisper extends Wisper {
                 final TweenCallback resetPositionCallback = new TweenCallback() {
                     @Override
                     public void onEvent(int type, BaseTween<?> source) {
-                        moveToWithDuration(baseX + wisperOffset, baseY, tweenManager, duration, equation, null);
+                        moveToWithDuration(baseX + AnimatedWisper.this.offset, baseY, tweenManager, duration, equation, null);
                     }
                 };
 
                 TweenCallback moveRightCallBack = new TweenCallback() {
                     @Override
                     public void onEvent(int type, BaseTween<?> source) {
-                        moveToWithDuration(baseX + wisperOffset, baseY + offset, tweenManager, duration, equation, resetPositionCallback);
+                        moveToWithDuration(baseX + AnimatedWisper.this.offset, baseY + offset, tweenManager, duration, equation, resetPositionCallback);
                     }
                 };
 
                 // First move left, then right callback, then reset
-                moveToWithDuration(baseX + wisperOffset, baseY - offset, tweenManager, duration, equation, moveRightCallBack);
+                moveToWithDuration(baseX + AnimatedWisper.this.offset, baseY - offset, tweenManager, duration, equation, moveRightCallBack);
             }
         });
 

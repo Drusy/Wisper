@@ -1,7 +1,5 @@
 package fr.wisper.screens.gamescreen;
 
-import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
@@ -20,7 +18,6 @@ import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import fr.wisper.Game.WisperGame;
-import fr.wisper.animations.tween.BodyAccessor;
 import fr.wisper.assets.GameScreenAssets;
 import fr.wisper.entities.AbstractBox2dWrapper;
 import fr.wisper.entities.BulletBox2d;
@@ -57,15 +54,13 @@ public class GameScreen implements FadingScreen {
     WisperBox2d wisper;
     private MouseJointDef jointDef;
     private MouseJoint joint;
-    private List<AbstractBox2dWrapper> toRemove = new ArrayList<AbstractBox2dWrapper>();
+    private List<AbstractBox2dWrapper> removedWrappers = new ArrayList<AbstractBox2dWrapper>();
+    private List<Body> inactiveBodies = new ArrayList<Body>();
 
     // Batch
     private SpriteBatch batch;
     private Array<Body> bodies = new Array<Body>();
     private int chosenWisper = Wisper.BLACK_WISPER;
-
-    // Tween
-    private TweenManager tweenManager;
 
     public GameScreen(int chosenWisper) {
         this.chosenWisper = chosenWisper;
@@ -84,11 +79,7 @@ public class GameScreen implements FadingScreen {
         stage.draw();
 
         // Clear world
-        for (AbstractBox2dWrapper entity : toRemove) {
-            world.destroyBody(entity.getBody());
-            entity.dispose();
-        }
-        toRemove.clear();
+        clearWorld();
 
         // Box2D
         world.step(TIME_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
@@ -96,7 +87,7 @@ public class GameScreen implements FadingScreen {
         mapRenderer.setView(WisperGame.Camera);
         mapRenderer.getSpriteBatch().setProjectionMatrix(WisperGame.Camera.combined);
         mapRenderer.render();
-        debugRenderer.render(world, WisperGame.Camera.combined);
+        //debugRenderer.render(world, WisperGame.Camera.combined);
 
         // Batch
         batch.setProjectionMatrix(WisperGame.Camera.combined);
@@ -105,16 +96,26 @@ public class GameScreen implements FadingScreen {
         for (Body body : bodies) {
             if (body.getUserData() != null && body.getUserData() instanceof AbstractBox2dWrapper) {
                 if (((AbstractBox2dWrapper) body.getUserData()).isComplete()) {
-                    toRemove.add(((WisperBox2d) body.getUserData()));
+                    removedWrappers.add(((WisperBox2d) body.getUserData()));
                 } else {
                     ((AbstractBox2dWrapper) body.getUserData()).draw(batch, delta);
                 }
             }
         }
         batch.end();
+    }
 
-        // Update animations
-        tweenManager.update(delta);
+    public void clearWorld() {
+        for (AbstractBox2dWrapper entity : removedWrappers) {
+            world.destroyBody(entity.getBody());
+            entity.dispose();
+        }
+        removedWrappers.clear();
+
+        for (Body body : inactiveBodies) {
+            body.setActive(false);
+        }
+        inactiveBodies.clear();
     }
 
     @Override
@@ -150,6 +151,15 @@ public class GameScreen implements FadingScreen {
         batch = new SpriteBatch();
         wisper = new WisperBox2d(chosenWisper, world);
 
+        // Temps
+        new WisperBox2d(Wisper.BLACK_WISPER, world).setPosition(
+                Config.APP_WIDTH / 2 - 10,
+                Config.APP_HEIGHT / 2 - 10);
+
+        new WisperBox2d(Wisper.BLUE_WISPER, world).setPosition(
+                Config.APP_WIDTH / 2 + 10,
+                Config.APP_HEIGHT / 2 + 10);
+
         // Tiled map
         TiledMap map = new TmxMapLoader().load("tiledmap/tiledmap.tmx");
         mapRenderer = new OrthogonalTiledMapRenderer(map, Config.GAME_RATIO);
@@ -161,9 +171,6 @@ public class GameScreen implements FadingScreen {
         jointDef.bodyA = box2dParser.getBodies().values().next();
         jointDef.collideConnected = true;
         jointDef.bodyB = wisper.getBody();
-
-        // Animations
-        initAnimations();
     }
 
     private void moveWisperTo(float x, float y, float maxForce, float dampingRation) {
@@ -232,7 +239,7 @@ public class GameScreen implements FadingScreen {
         float xOffset = xForce < 0 ? -1 : 1;
         float yOffset = yForce < 0 ? -1 : 1;
 
-        bullet.getBody().setTransform(wisper.getPosition().x + xOffset, wisper.getPosition().y + yOffset, wisper.getAngle());
+        bullet.setPosition(wisper.getPosition().x + xOffset, wisper.getPosition().y + yOffset);
 
         bullet.getBody().applyLinearImpulse(
                 new Vector2(xForce, yForce),
@@ -282,19 +289,30 @@ public class GameScreen implements FadingScreen {
 
     private void initContactListener() {
         world.setContactListener(new ContactListener() {
+            private void collideWisperBullet(Body wisperBody, Body bulletBody) {
+                removedWrappers.add(((BulletBox2d) bulletBody.getUserData()));
+                ((WisperBox2d) wisperBody.getUserData()).explode();
+                inactiveBodies.add(wisperBody);
+            }
+
             @Override
             public void beginContact(Contact contact) {
                 Body bodyA = contact.getFixtureA().getBody();
                 Body bodyB = contact.getFixtureB().getBody();
 
+                // Collision Bullet / Wisper
                 if (bodyA.getUserData() != null && bodyA.getUserData() instanceof WisperBox2d
                         && bodyA.getUserData() != wisper && bodyB.isBullet()) {
-                    toRemove.add(((WisperBox2d) bodyB.getUserData()));
-                    ((WisperBox2d)bodyA.getUserData()).explode();
+                    collideWisperBullet(bodyA, bodyB);
                 } else if (bodyB.getUserData() != null && bodyB.getUserData() instanceof WisperBox2d
                         && bodyB.getUserData() != wisper && bodyA.isBullet()) {
-                    toRemove.add(((WisperBox2d) bodyA.getUserData()));
-                    ((WisperBox2d)bodyB.getUserData()).explode();
+                    collideWisperBullet(bodyB, bodyA);
+                }
+                // Collision Bullet / Other
+                else if (bodyA.isBullet() && bodyB.getUserData() == null) {
+                    removedWrappers.add((BulletBox2d) bodyA.getUserData());
+                } else if (bodyB.isBullet() && bodyA.getUserData() == null) {
+                    removedWrappers.add((BulletBox2d) bodyB.getUserData());
                 }
 
             }
@@ -315,12 +333,6 @@ public class GameScreen implements FadingScreen {
             }
 
         });
-    }
-
-    private void initAnimations() {
-        tweenManager = new TweenManager();
-
-        Tween.registerAccessor(Body.class, new BodyAccessor());
     }
 
     public void fadeTo(final FadingScreen screen) {

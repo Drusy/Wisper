@@ -28,7 +28,6 @@ public class SpeechBubble extends TextBox {
 
     @Override
     public void draw(Batch batch, float parentAlpha){
-
         background.draw(batch, getX(), getY(), getWidth(), getHeight());
 
         if (!usePic){

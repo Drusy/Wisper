@@ -26,8 +26,14 @@ public abstract class AbstractBox2dWrapper extends Actor {
         return  body.getAngle();
     }
 
+    @Override
+    public void setPosition(float x, float y) {
+        body.setTransform(x, y, getAngle());
+    }
+
     public abstract boolean isComplete();
     public abstract void dispose();
+
     @Override
     public abstract void draw(Batch batch, float parentAlpha);
 }

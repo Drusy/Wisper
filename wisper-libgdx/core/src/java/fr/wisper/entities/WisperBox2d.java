@@ -71,6 +71,7 @@ public class WisperBox2d extends AbstractBox2dWrapper {
         shape.dispose();
 
         body.setUserData(this);
+        body.setGravityScale(0);
 
         return body;
     }

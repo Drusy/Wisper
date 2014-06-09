@@ -142,7 +142,7 @@ public class GameScreen implements FadingScreen {
         Gdx.input.setCatchBackKey(true);
 
         // Box2d
-        world = new World(new Vector2(0, 0f), true); // newton -9.81f
+        world = new World(new Vector2(0, -9.81f), true); // newton -9.81f
         debugRenderer = new Box2DDebugRenderer();
         initContactListener();
 

@@ -38,6 +38,8 @@ In this game, a wisper (a body separated soul) will have to find his body by tra
 ## Screenshots libGDX
 ![libGDX Wisper](/wisper-libgdx/screenshots/wisper_homescreen.png "libGDX Wisper")
 
+[More screenshots here](https://github.com/Drusy/Wisper/tree/master/wisper-libgdx/screenshots)
+
 ## Screenshots Cocos2d-x
 ![Wisper move using accelerometer & gravity](/wisper-cocos2d-x/Screenshots/wisper_move1.png "Wisper move using accelerometer & gravity")
 
